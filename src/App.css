@@ -17,9 +17,6 @@ body {
   height: calc(100% / 9);
   cursor: pointer;
 }
-.stripe.small:hover {
-  background: rgba(10, 35, 75, .3);
-}
 .stripe.selected {
   height: 80%;
   cursor: initial;
@@ -29,6 +26,12 @@ body {
 }
 .stripe:nth-of-type(odd) {
   background: rgba(0,0,0,.03);
+}
+.stripe:hover {
+  background: rgba(10, 35, 75, .3);
+}
+.stripe.selected:hover {
+  background: none;
 }
 
 .letter {
