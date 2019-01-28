@@ -10,7 +10,9 @@ class Life extends React.Component {
     this.setState({ showLife: !this.state.showLife });
   }
   render () {
-    return this.state.showLife ? (<Grid />) : (<button onClick={this.toggleLife}>Life</button>);
+    return this.state.showLife ?
+      (<Grid />) :
+      (<button onClick={this.toggleLife}>Play Conway's Game of Life</button>);
   };
 }
 
