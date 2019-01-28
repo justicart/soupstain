@@ -27,10 +27,10 @@
   background: #24d3fd;
 }
 .block.selected .blockInner {
-  border-color: green;
+  border-color: #24d3fd;
 }
 .block.fill.selected .blockInner {
-  background: green;
+  background: #24d3fd;
 }
 .block.relative .blockInner {
   border-color: white;
@@ -64,11 +64,11 @@
   left: 25%;
   width: 50%;
   height: 50%;
-  background: green;
+  background: #24d3fd;
 }
 .block.fill .toggle {
   background: black;
-  border: 1px solid green;
+  border: 1px solid #24d3fd;
 }
 
 .buttonBar {
@@ -89,6 +89,15 @@ hr {
 
 .controls {
   padding: 15px;
+}
+
+.settings {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  background: rgba(0,0,0,.8);
+  padding: 10px;
+  min-width: 150px
 }
 
 button, input {

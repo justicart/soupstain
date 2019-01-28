@@ -23,6 +23,7 @@ class Grid extends React.Component {
     highlightedIndex: undefined,
     relativeNumbersIndex: undefined,
     relativeNumbers: [],
+    showSettings: false,
   }
 
   componentDidMount () {
@@ -211,6 +212,10 @@ class Grid extends React.Component {
     this.setState({ currentGrid: this.state.emptyGrid });
   }
 
+  toggleSettings = () => {
+    this.setState({ showSettings: !this.state.showSettings });
+  }
+
   render () {
     const { emptyGrid, highlightedIndex, gridWidth } = this.state;
     const gridArray = emptyGrid || [];
@@ -237,34 +242,31 @@ class Grid extends React.Component {
         <div className="flexWrap">
           {renderGrid}
         </div>
-        <div className="controls rowParent">
-          <div className="flexChild shrink">
+        <div className="controls">
+          <div style={{ marginBottom: '5px' }}>
+            <button onClick={this.mutate} className="mutate">Mutate</button>
+          </div>
+          <div>
             <button onClick={this.generateRandomGrid}>Random</button>
             <button onClick={this.glider}>Glider</button>
             <button onClick={this.glidergun}>Glider Gun</button>
             <button onClick={this.pulsar}>Pulsar</button>
             &nbsp;&nbsp;
             <button onClick={this.clear}>Clear</button>
-          </div>
-          <div className="flexChild">
-            <button onClick={this.mutate} className="mutate">Mutate</button>
-          </div>
-          <div className="flexChild shrink rowParent">
-            <label><input type="checkbox" onClick={this.toggleNumbers}/> Show numbers</label>
             &nbsp;&nbsp;
-            <form>
-              <input type="number" style={{ width: '50px' }} onChange={this.updateWidth} />
-              <button onClick={this.changeWidth}>Size</button>
-            </form>
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              <button onClick={this.toggleSettings}>Settings</button>
+              {this.state.showSettings && <div className="settings">
+                <label><input type="checkbox" onClick={this.toggleNumbers}/> Show numbers</label>
+                &nbsp;&nbsp;
+                <form>
+                  <input type="number" style={{ width: '75px' }} onChange={this.updateWidth} />
+                  <button onClick={this.changeWidth}>Size</button>
+                </form>
+              </div>}
+            </div>
           </div>
         </div>
-        <div>
-
-        </div>
-        <div>
-
-        </div>
-
       </div>
     );
   }

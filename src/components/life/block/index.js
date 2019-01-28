@@ -30,11 +30,11 @@ class Block extends React.Component {
           <div className="x">x</div>
           <div className="toggle" onClick={this.props.toggleIndex(index)}></div>
           <div className="buttonBar">
-            <button onClick={this.props.toggleRelativeNumbers(index)}>Relative</button>
-            <hr/>
             <button onClick={this.props.addPulsar(index)}>Pulsar</button>
             <button onClick={this.props.addGlider(index)}>Glider</button>
             <button onClick={this.props.addGlidergun(index)}>Glider Gun</button>
+            <hr/>
+            <button onClick={this.props.toggleRelativeNumbers(index)}>Relative</button>
           </div>
         </div>}
       </div>
