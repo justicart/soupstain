@@ -209,7 +209,11 @@ class Grid extends React.Component {
   }
 
   clear = () => {
-    this.setState({ currentGrid: this.state.emptyGrid });
+    const currentGrid = [];
+    this.state.emptyGrid.map((block, index) => {
+      return currentGrid[index] = false;
+    });
+    this.setState({ currentGrid });
   }
 
   toggleSettings = () => {
