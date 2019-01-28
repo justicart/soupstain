@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import './App.css';
 import Stripe from './components/stripe';
 
+import Life from './components/life';
+
 class App extends Component {
   constructor () {
     super();
@@ -39,32 +41,32 @@ class App extends Component {
     const size = this.state.size;
     return (
       <div className="main columnParent">
-        <Stripe name="stripe01" letter="S" size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-          <div>Coming soon!</div>
+        <Stripe name="stripe01" letter="S" preview={<div className="generic">Conway's Game of Life</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected} reveal>
+          <Life />
         </Stripe>
-        <Stripe name="stripe02" letter="O" size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-          <div>Coming soon!</div>
+        <Stripe name="stripe02" letter="O" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
+
         </Stripe>
-        <Stripe name="stripe03" letter="U" size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-          <div>Coming soon!</div>
+        <Stripe name="stripe03" letter="U" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
+
         </Stripe>
-        <Stripe name="stripe04" letter="P" size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-          <div>Coming soon!</div>
+        <Stripe name="stripe04" letter="P" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
+
         </Stripe>
-        <Stripe name="stripe05" letter="S" size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-          <div>Coming soon!</div>
+        <Stripe name="stripe05" letter="S" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
+
         </Stripe>
-        <Stripe name="stripe06" letter="T" size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-          <div>Coming soon!</div>
+        <Stripe name="stripe06" letter="T" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
+
         </Stripe>
-        <Stripe name="stripe07" letter="A" size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-          <div>Coming soon!</div>
+        <Stripe name="stripe07" letter="A" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
+
         </Stripe>
-        <Stripe name="stripe08" letter="I" size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-          <div>Coming soon!</div>
+        <Stripe name="stripe08" letter="I" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
+
         </Stripe>
-        <Stripe name="stripe09" letter="N" size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-          <div>Coming soon!</div>
+        <Stripe name="stripe09" letter="N" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
+
         </Stripe>
       </div>
     );

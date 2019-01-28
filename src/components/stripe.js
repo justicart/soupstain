@@ -32,21 +32,27 @@ class Stripe extends React.Component {
     }
   }
   render () {
+    const selected = this.props.selected === this.props.name;
+    const small = this.props.selected && this.props.selected !== this.props.name;
     const classes = classNames(
       'stripe',
       {
         active: this.state.active,
-        selected: this.props.selected === this.props.name,
-        small: this.props.selected && this.props.selected !== this.props.name,
+        selected,
+        small,
       }
     );
     const backgroundUrl = this.props.backgroundUrl || './images/bg-clouds-bw.jpg';
+    const reveal = this.props.reveal ? selected : true;
     return (
-      <div className={classes} style={{ fontSize: `${this.props.size}px` }} onMouseEnter={this.mouseEnter()} onMouseLeave={this.mouseLeave()} onClick={this.selectStripe(this.props.name)}>
+      <div className={classes} onMouseEnter={this.mouseEnter()} onMouseLeave={this.mouseLeave()} onClick={this.selectStripe(this.props.name)}>
         <div className="background" style={{ background: `url(${backgroundUrl}) no-repeat 50% 50%/cover` }}></div>
-        <div className="letter" onClick={this.props.selectStripe()}>{this.props.letter}</div>
-        <div className="inner flexChild columnParent flexCenter">
-          {this.props.children}
+        <div className="letter" onClick={this.props.selectStripe()} style={{ fontSize: small ? `${this.props.size * .2}px` : `${this.props.size}px` }}>{this.props.letter}</div>
+        <div className="inner" style={{ height: `calc(100% - ${this.props.size || 20}px)` }}>
+          {reveal && this.props.children}
+        </div>
+        <div className="preview flexChild columnParent flexCenter">
+          {this.props.preview}
         </div>
       </div>
     );

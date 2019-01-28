@@ -41,7 +41,7 @@ body {
   height: 1em;
   width: 100%;
   text-align: center;
-  transition: 500ms opacity ease 500ms;
+  transition: 500ms opacity ease 500ms, 500ms font-size ease 0ms;
   opacity: 1;
   transform: translateY(0);
 }
@@ -77,26 +77,26 @@ body {
 .inner {
   position: absolute;
   bottom: 0;
-  font-family: 'Rubik Mono One', sans-serif;
   line-height: 1em;
   width: 100%;
   height: 100%;
   text-align: center;
+}
+.preview div.generic {
+  font-family: 'Rubik Mono One', sans-serif;
+  font-size: 30px;
+}
+.stripe .preview {
+  width: 100%;
+  height: 100%;
   transition: 250ms transform ease 500ms, 250ms height ease;
   transform: translateY(-110%);
 }
-.inner div {
-  font-size: 30px;
-}
-.stripe.active .inner,
-.stripe.selected .inner {
+.stripe.active .preview {
   transition-delay: 0ms;
   transform: translateY(0);
 }
-.stripe.selected .inner {
-  height: calc(100% - 1em);
-}
-.stripe.active.small .inner {
+.stripe.active.small .preview {
   transform: translateY(-110%);
 }
 

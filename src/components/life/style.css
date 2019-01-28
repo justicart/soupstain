@@ -1,0 +1,96 @@
+.flexWrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.block {
+  padding: .1em;
+  display: inline-block;
+  box-sizing: border-box;
+  position: relative;
+  cursor: pointer;
+}
+.block .blockInner {
+  height: 100%;
+  width: 100%;
+  border: 1px solid black;
+  background: rgba(2,40,50,.3);
+  font-size: 16px;
+  line-height: 1em;
+  color: #666;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.block.fill .blockInner {
+  background: #24d3fd;
+}
+.block.selected .blockInner {
+  border-color: green;
+}
+.block.fill.selected .blockInner {
+  background: green;
+}
+.block.relative .blockInner {
+  border-color: white;
+}
+.hud {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background: rgba(0,0,0,.5);
+  border-radius: 10px;
+  z-index: 1000;
+}
+.x {
+  color: white;
+  position: absolute;
+  top: -10px;
+  right: -15px;
+  line-height: 23px;
+  font-size: 23px;
+  background: black;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  text-align: center;
+}
+.toggle {
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  width: 50%;
+  height: 50%;
+  background: green;
+}
+.block.fill .toggle {
+  background: black;
+  border: 1px solid green;
+}
+
+.buttonBar {
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  min-width: 100px;
+}
+.buttonBar button {
+  line-height: 2em;
+  width: 100%;
+  display: block;
+}
+hr {
+  margin: 0;
+  border-color: black;
+}
+
+.controls {
+  padding: 15px;
+}
+
+button, input {
+  line-height: 2em;
+}
