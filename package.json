@@ -4,8 +4,10 @@
   "private": true,
   "dependencies": {
     "class-names": "^1.0.0",
+    "p5": "^0.7.3",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-p5-wrapper": "^0.0.4",
     "react-scripts": "1.0.17"
   },
   "scripts": {

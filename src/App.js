@@ -4,6 +4,7 @@ import './App.css';
 import Stripe from './components/stripe';
 
 import Life from './components/life';
+import PerlinNoise from './components/perlin';
 
 class App extends Component {
   constructor () {
@@ -44,8 +45,8 @@ class App extends Component {
         <Stripe name="stripe01" letter="S" preview={<div className="generic">Conway's Game of Life</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected} reveal>
           <Life />
         </Stripe>
-        <Stripe name="stripe02" letter="O" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-
+        <Stripe name="stripe02" letter="O" preview={<div className="generic">Perlin Noise Loop</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
+          <PerlinNoise />
         </Stripe>
         <Stripe name="stripe03" letter="U" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
 
