@@ -1,10 +1,14 @@
 import React from 'react';
 
 import Grid from './../../components/life/grid';
+import Throbber from '../throbber';
 
 class Life extends React.Component {
   state = {
     showLife: false,
+  }
+  componentDidMount () {
+    setTimeout(this.toggleLife, 1000);
   }
   toggleLife = () => {
     this.setState({ showLife: !this.state.showLife });
@@ -12,7 +16,7 @@ class Life extends React.Component {
   render () {
     return this.state.showLife ?
       (<Grid />) :
-      (<button onClick={this.toggleLife}>Play Conway's Game of Life</button>);
+      (<Throbber />);
   };
 }
 

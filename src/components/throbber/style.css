@@ -1,0 +1,61 @@
+.throbberContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* background: rgba(100,100,100,.8); */
+}
+.throbberContainer  .throbber {
+  height: 1em;
+  width: 1.5em;
+  position: relative;
+}
+.throbberContainer  .throbber   .bar {
+  width: .4em;
+  min-width: 5px;
+  height: .6em;
+  min-height: 8px;
+  background: white;
+  position: absolute;
+  top: .2em;
+  transform-origin: 0 0;
+  -webkit-animation: 1s lift infinite;
+  animation: 1s lift infinite;
+}
+.throbberContainer  .throbber   .bar:first-of-type {
+  left: 0;
+  -webkit-animation-delay: 0ms;
+  animation-delay: 0s;
+}
+.throbberContainer  .throbber   .bar:nth-of-type(2) {
+  left: .5em;
+  -webkit-animation-delay: 0.1ms;
+  animation-delay: 0.1s;
+}
+.throbberContainer  .throbber   .bar:last-of-type {
+  left: 1em;
+  -webkit-animation-delay: 0.3ms;
+  animation-delay: 0.3s;
+}
+.throbberContainer.dark .throbber .bar {
+  background: #444950;
+}
+
+@-webkit-keyframes lift {
+  0%, 50%  { -webkit-transform: translateY(0) scaleY(1) }
+  25%  { -webkit-transform: translateY(-.2em) scaleY(.5) }
+}
+@keyframes lift {
+  0%, 50%  {
+    -webkit-transform: translateY(0) scaleY(1);
+    transform: translateY(0) scaleY(1);
+  }
+  25%  {
+    -webkit-transform: translateY(-.2em) scaleY(.5);
+    transform: translateY(-.2em) scaleY(.5);
+  }
+}

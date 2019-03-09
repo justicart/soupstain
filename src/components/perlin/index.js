@@ -2,6 +2,7 @@ import React from 'react';
 import P5Wrapper from 'react-p5-wrapper';
 import perlinNoise from './perlinNoise.js';
 import PerlinControls from './controls.js';
+import Throbber from '../throbber';
 
 class PerlinNoise extends React.Component {
   state = {
@@ -27,6 +28,7 @@ class PerlinNoise extends React.Component {
   componentDidMount () {
     // this.getSize();
     window.addEventListener('resize', this.getSize);
+    setTimeout(this.toggleApp, 1000);
   }
 
   componentWillUnmount () {
@@ -63,7 +65,6 @@ class PerlinNoise extends React.Component {
 
   setDevice = () => {
     const size = this.parentRef.getBoundingClientRect();
-    console.warn(size.width, size.height);
     if (size.width < 640 || size.height < 640) {
       return this.setState({ device: 'mobile' });
     }
@@ -97,7 +98,7 @@ class PerlinNoise extends React.Component {
               </div>
             </div>
           </div>}
-          {!this.state.showApp && <button onClick={this.toggleApp}>Start the chaos</button>}
+          {!this.state.showApp && <Throbber />}
         </div>
       </React.Fragment>
     );

@@ -36,7 +36,6 @@ class App extends Component {
 
   selectStripe (selected, topAdjust, heightAdjust) {
     return () => {
-      console.warn(selected, topAdjust, heightAdjust);
       this.setState({ selected, heightAdjust, topAdjust })
     }
   }

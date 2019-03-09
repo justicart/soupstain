@@ -45,13 +45,17 @@ class Grid extends React.Component {
   getSize = () => {
     const size = this.elementRef.getBoundingClientRect();
     const width = size.width;
+    let newGridWidth = this.state.gridWidth;
+    if (width < 400) {
+      newGridWidth = 18;
+    }
     const height = size.height;
-    const columns = Math.floor(width / this.state.gridWidth);
-    const rows = Math.floor((height - BUTTON_ROW_HEIGHT) / this.state.gridWidth);
+    const columns = Math.floor(width / newGridWidth);
+    const rows = Math.floor((height - BUTTON_ROW_HEIGHT) / newGridWidth);
     const numberOfBlocks = columns * rows;
     const emptyGrid = (new Array(numberOfBlocks)).fill();
     const currentGrid = [...this.state.currentGrid];
-    this.setState({ currentGrid, emptyGrid, columns, rows });
+    this.setState({ currentGrid, emptyGrid, columns, rows, gridWidth: newGridWidth });
   }
 
   updateNextGrid = (index) => {
