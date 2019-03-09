@@ -105,6 +105,9 @@ body {
   transform: translateY(calc(-100% - 1.2em));
 }
 
+.mobile .controls {
+  height: 100px;
+}
 .formRow {
   margin: 10px;
   width: 200px;
@@ -170,17 +173,17 @@ body {
   -ms-flex: 0 0 auto;
   flex: 0 0 auto;
 }
-.flexChild.columnParent.reverse {
+.columnParent.reverse {
   flex-direction: column-reverse;
 }
-.flexChild.rowParent.reverse {
+.rowParent.reverse {
   flex-direction: row-reverse;
 }
 .flexChild.scroll {
   overflow-y: auto;
   overflow-x: hidden
 }
-.flexChild.flexCenter {
+.flexCenter {
   -webkit-box-align: center;
   -moz-box-align: center;
   -ms-flex-align: center;

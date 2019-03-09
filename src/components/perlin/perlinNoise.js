@@ -23,7 +23,7 @@ export default function perlinNoise (p) {
     width = props.width;
     height = props.height;
     max = width > height ? height : width;
-    noiseMax = props.noiseMax / 100;
+    noiseMax = props.noiseMax / 1000;
     count = props.count;
     spacing = props.spacing / 100;
     smooth = props.smooth;

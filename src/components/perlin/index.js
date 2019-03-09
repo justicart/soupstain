@@ -9,7 +9,7 @@ class PerlinNoise extends React.Component {
     width: 200,
     showApp: false,
     values: {
-      noiseMax: 100,
+      noiseMax: 1000,
       count: 1,
       spacing: 1000,
       smooth: 5,
@@ -20,7 +20,8 @@ class PerlinNoise extends React.Component {
       strokeWidthDecay: 100,
       strokeOpacityDecay: 100,
       zOffset: 0,
-    }
+    },
+    device: 'desktop',
   };
   componentDidMount () {
     // this.getSize();
@@ -37,6 +38,12 @@ class PerlinNoise extends React.Component {
       this.getSize();
     }
   };
+  parentRefCallback = element => {
+    if (element) {
+      this.parentRef = element;
+      this.setDevice();
+    }
+  };
 
   toggleApp = () => {
     this.setState({ showApp: !this.state.showApp });
@@ -49,14 +56,23 @@ class PerlinNoise extends React.Component {
     this.setState({ height, width });
   }
 
+  setDevice = () => {
+    const size = this.parentRef.getBoundingClientRect();
+    if (size.width < 640 || size.height < 640) {
+      return this.setState({ device: 'mobile' });
+    }
+    return false;
+  }
+
   updateValue = (key, value) => {
     this.setState({ values: { ...this.state.values, [key]: value }});
   }
   render () {
     const { width, height, values } = this.state;
+    const classes = this.state.device === 'mobile' ? 'mobile columnParent reverse' : 'rowParent';
     return this.state.showApp ?
-      (<div className="rowParent" style={{ height: '100%', width: '100%' }}>
-        <div className="flexChild scroll shrink">
+      (<div className={classes} style={{ height: '100%', width: '100%' }} ref={this.parentRefCallback}>
+        <div className="controls flexChild scroll shrink">
           <PerlinControls updateValue={this.updateValue} {...this.state.values} />
         </div>
         <div className="flexChild">

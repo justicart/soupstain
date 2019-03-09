@@ -8,7 +8,7 @@ class PerlinControls extends React.Component {
   };
   render () {
     const formElements = [
-      { name: 'noiseMax', label: 'Noise Max', min: 0, max: 10000, divisor: 100 },
+      { name: 'noiseMax', label: 'Noise Max', min: 0, max: 10000, divisor: 1000, round: 3 },
       { name: 'count', label: 'Count', min: 1, max: 100 },
       { name: 'spacing', label: 'Spacing', min: 0, max: 20000, divisor: 100 },
       { name: 'smooth', label: 'Smooth', min: 1, max: 20 },
