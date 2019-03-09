@@ -105,16 +105,17 @@ body {
   transform: translateY(calc(-100% - 1.2em));
 }
 
+.mobile {
+  height: 100%;
+  width: 100%;
+}
 .mobile .controls {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
   width: calc(100% - 30px);
   height: 100%;
   overflow-y: auto;
-}
-.mobile .spacer {
-  height: 80%;
 }
 .formRow {
   margin: 10px;

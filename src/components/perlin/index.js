@@ -8,6 +8,7 @@ class PerlinNoise extends React.Component {
     height: 200,
     width: 200,
     showApp: false,
+    showMobileControls: true,
     values: {
       noiseMax: 1000,
       count: 1,
@@ -49,6 +50,10 @@ class PerlinNoise extends React.Component {
     this.setDevice();
   }
 
+  toggleMobileControls = () => {
+    this.setState({ showMobileControls: !this.state.showMobileControls });
+  }
+
   getSize = () => {
     const size = this.perlinRef.getBoundingClientRect();
     const width = size.width;
@@ -74,13 +79,13 @@ class PerlinNoise extends React.Component {
       <React.Fragment>
         <div style={{ height: '100%', width: '100%' }} ref={this.parentRefCallback}>
           {this.state.showApp && this.state.device === 'mobile' && <div className="mobile">
-            <div style={{ height: '100%', width: '100%' }} ref={this.refCallback}>
+            <div style={{ height: '100%', width: '100%' }} ref={this.refCallback} onClick={this.toggleMobileControls}>
               <P5Wrapper sketch={perlinNoise} width={width} height={height} {...values} />
             </div>
-            <div className="controls">
-              <div className="spacer"></div>
+            {this.state.showMobileControls && <div className="controls">
               <PerlinControls updateValue={this.updateValue} {...this.state.values} />
-            </div>
+              <button onClick={this.toggleMobileControls}>Hide Controls</button>
+            </div>}
           </div>}
           {this.state.showApp && this.state.device !== 'mobile' && <div className="rowParent">
             <div className="controls flexChild scroll shrink">
