@@ -41,12 +41,12 @@ class PerlinNoise extends React.Component {
   parentRefCallback = element => {
     if (element) {
       this.parentRef = element;
-      this.setDevice();
     }
   };
 
   toggleApp = () => {
     this.setState({ showApp: !this.state.showApp });
+    this.setDevice();
   }
 
   getSize = () => {
@@ -58,6 +58,7 @@ class PerlinNoise extends React.Component {
 
   setDevice = () => {
     const size = this.parentRef.getBoundingClientRect();
+    console.warn(size.width, size.height);
     if (size.width < 640 || size.height < 640) {
       return this.setState({ device: 'mobile' });
     }
@@ -69,19 +70,32 @@ class PerlinNoise extends React.Component {
   }
   render () {
     const { width, height, values } = this.state;
-    const classes = this.state.device === 'mobile' ? 'mobile columnParent reverse' : 'rowParent';
-    return this.state.showApp ?
-      (<div className={classes} style={{ height: '100%', width: '100%' }} ref={this.parentRefCallback}>
-        <div className="controls flexChild scroll shrink">
-          <PerlinControls updateValue={this.updateValue} {...this.state.values} />
+    return (
+      <React.Fragment>
+        <div style={{ height: '100%', width: '100%' }} ref={this.parentRefCallback}>
+          {this.state.showApp && this.state.device === 'mobile' && <div className="mobile">
+            <div style={{ height: '100%', width: '100%' }} ref={this.refCallback}>
+              <P5Wrapper sketch={perlinNoise} width={width} height={height} {...values} />
+            </div>
+            <div className="controls">
+              <div className="spacer"></div>
+              <PerlinControls updateValue={this.updateValue} {...this.state.values} />
+            </div>
+          </div>}
+          {this.state.showApp && this.state.device !== 'mobile' && <div className="rowParent">
+            <div className="controls flexChild scroll shrink">
+              <PerlinControls updateValue={this.updateValue} {...this.state.values} />
+            </div>
+            <div className="flexChild">
+              <div style={{ height: '100%', width: '100%' }} ref={this.refCallback}>
+                <P5Wrapper sketch={perlinNoise} width={width} height={height} {...values} />
+              </div>
+            </div>
+          </div>}
+          {!this.state.showApp && <button onClick={this.toggleApp}>Start the chaos</button>}
         </div>
-        <div className="flexChild">
-          <div style={{ height: '100%', width: '100%' }} ref={this.refCallback}>
-            <P5Wrapper sketch={perlinNoise} width={width} height={height} {...values} />
-          </div>
-        </div>
-      </div>) :
-      (<button onClick={this.toggleApp}>Start the chaos</button>);
+      </React.Fragment>
+    );
   }
 }
 

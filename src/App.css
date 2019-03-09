@@ -106,12 +106,23 @@ body {
 }
 
 .mobile .controls {
-  height: 100px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: calc(100% - 30px);
+  height: 100%;
+  overflow-y: auto;
+}
+.mobile .spacer {
+  height: 80%;
 }
 .formRow {
   margin: 10px;
   width: 200px;
   text-align: left;
+}
+.mobile .formRow {
+  width: calc(100% - 20px);
 }
 .formRow .number {
   font-feature-settings: 'tnum';
