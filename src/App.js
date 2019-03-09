@@ -12,6 +12,8 @@ class App extends Component {
     this.state = {
       size: 20,
       selected: undefined,
+      heightAdjust: undefined,
+      topAdjust: undefined,
     };
     this.calculateLetterSize = this.calculateLetterSize.bind(this);
     this.selectStripe = this.selectStripe.bind(this);
@@ -32,43 +34,48 @@ class App extends Component {
     this.setState({ size });
   }
 
-  selectStripe (selected) {
+  selectStripe (selected, topAdjust, heightAdjust) {
     return () => {
-      this.setState({ selected })
+      console.warn(selected, topAdjust, heightAdjust);
+      this.setState({ selected, heightAdjust, topAdjust })
     }
   }
 
   render() {
-    const size = this.state.size;
+    const { size, selected, heightAdjust, topAdjust } = this.state;
+    const stripes = [
+      { letter: 'S', previewText: 'Conway\'s Game of Life', content: <Life />, top: '0', height: 'calc(100vh + 12.5em)'},
+      { letter: 'O', previewText: 'Perlin Noise Loop', content: <PerlinNoise />, top: '0', height: 'calc(100vh + 10.5em)'},
+      { letter: 'U', previewText: 'Some day', content: '', top: '-1.7em', height: 'calc(100vh + 10.5em)'},
+      { letter: 'P', previewText: 'Some day', content: '', top: '-3.4em', height: 'calc(100vh + 10.5em)'},
+      { letter: 'S', previewText: 'Some day', content: '', top: '-5.1em', height: 'calc(100vh + 10.5em)'},
+      { letter: 'T', previewText: 'Some day', content: '', top: '-6.8em', height: 'calc(100vh + 10.5em)'},
+      { letter: 'A', previewText: 'Some day', content: '', top: '-8.5em', height: 'calc(100vh + 10.5em)'},
+      { letter: 'I', previewText: 'Some day', content: '', top: '-10.2em', height: 'calc(100vh + 10.5em)'},
+      { letter: 'N', previewText: 'Some day', content: '', top: '-11.9em', height: 'calc(100vh + 12.2em)'},
+    ]
+    const renderStripes = stripes.map((stripe, index) => {
+      return (
+        <Stripe
+          key={index}
+          name={`stripe${index + 1}`}
+          letter={stripe.letter}
+          preview={<div className="generic">{stripe.previewText}</div>}
+          size={size}
+          selectStripe={this.selectStripe}
+          selected={selected}
+          stripe={stripe}
+          reveal
+        >
+          {stripe.content}
+        </Stripe>
+      )
+    });
+    const height = selected ? heightAdjust : '100vh';
+    const top = selected ? topAdjust : '0';
     return (
-      <div className="main columnParent">
-        <Stripe name="stripe01" letter="S" preview={<div className="generic">Conway's Game of Life</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected} reveal>
-          <Life />
-        </Stripe>
-        <Stripe name="stripe02" letter="O" preview={<div className="generic">Perlin Noise Loop</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-          <PerlinNoise />
-        </Stripe>
-        <Stripe name="stripe03" letter="U" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-
-        </Stripe>
-        <Stripe name="stripe04" letter="P" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-
-        </Stripe>
-        <Stripe name="stripe05" letter="S" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-
-        </Stripe>
-        <Stripe name="stripe06" letter="T" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-
-        </Stripe>
-        <Stripe name="stripe07" letter="A" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-
-        </Stripe>
-        <Stripe name="stripe08" letter="I" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-
-        </Stripe>
-        <Stripe name="stripe09" letter="N" preview={<div className="generic">Coming soon!</div>} size={size} selectStripe={this.selectStripe} selected={this.state.selected}>
-
-        </Stripe>
+      <div className="main columnParent" style={{ height, top }}>
+        {renderStripes}
       </div>
     );
   }

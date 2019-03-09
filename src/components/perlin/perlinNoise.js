@@ -5,12 +5,14 @@ export default function perlinNoise (p) {
   let zoff = 0;
   let width = 500;
   let height = 300;
+  let max = 300;
   let noiseMax = 100;
   let count = 1;
   let spacing = 100;
-  let detail = 5;
+  let smooth = 5;
   let size = 100;
   let twist = 0;
+  let rotate;
   let strokeWidth;
   let strokeWidthDecay;
   let strokeOpacityDecay;
@@ -20,12 +22,14 @@ export default function perlinNoise (p) {
   p.myCustomRedrawAccordingToNewPropsHandler = (props) => {
     width = props.width;
     height = props.height;
+    max = width > height ? height : width;
     noiseMax = props.noiseMax / 100;
     count = props.count;
     spacing = props.spacing / 100;
-    detail = props.detail;
+    smooth = props.smooth;
     size = props.size;
     twist = props.twist / 1000;
+    rotate = props.rotate / 1000;
     strokeWidth = props.strokeWidth / 100;
     strokeWidthDecay = props.strokeWidthDecay / 100;
     strokeOpacityDecay = props.strokeOpacityDecay / 100;
@@ -46,13 +50,13 @@ export default function perlinNoise (p) {
     iteratorArray.fill();
     iteratorArray.forEach((c, index) => {
       const calcStrokeWeight = strokeWidth - (((strokeWidth / count) * index) * strokeWidthDecay);
-      const calcHeight = (height * (size / 100)) - (spacing * index);
+      const calcHeight = (max * (size / 100)) - (spacing * index);
       const calcPhase = phase + (index * twist);
       const calcZoff = zoff - (index * zOffset);
       p.stroke(`rgba(255,255,255,${1 - (((1 / count) * index) * strokeOpacityDecay)})`);
       p.strokeWeight(calcStrokeWeight);
       p.beginShape();
-      for (let a = 0; a < (2 * Math.PI); a += p.radians(detail)) {
+      for (let a = 0; a < (2 * Math.PI); a += p.radians(smooth)) {
         let xoff = p.map(p.cos(a + calcPhase), -1, 1, 0, noiseMax);
         let yoff = p.map(p.sin(a + calcPhase), -1, 1, 0, noiseMax);
         let r = p.map(p.noise(xoff, yoff, calcZoff), 0, 1, 100, calcHeight / 2);
@@ -63,7 +67,7 @@ export default function perlinNoise (p) {
       p.endShape(p5.CLOSE);
       return false;
     })
-    phase += 0.003;
+    phase += rotate || 0;
     zoff += 0.01;
   }
 }

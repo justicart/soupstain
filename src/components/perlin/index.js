@@ -12,9 +12,10 @@ class PerlinNoise extends React.Component {
       noiseMax: 100,
       count: 1,
       spacing: 1000,
-      detail: 5,
+      smooth: 5,
       size: 100,
       twist: 0,
+      rotate: 3,
       strokeWidth: 200,
       strokeWidthDecay: 100,
       strokeOpacityDecay: 100,
@@ -55,17 +56,16 @@ class PerlinNoise extends React.Component {
     const { width, height, values } = this.state;
     return this.state.showApp ?
       (<div className="rowParent" style={{ height: '100%', width: '100%' }}>
-        <PerlinControls updateValue={this.updateValue} {...this.state.values} />
-        <div style={{ height: '100%', width: '100%' }} ref={this.refCallback}>
-          <P5Wrapper sketch={perlinNoise} width={width} height={height} {...values} />
+        <div className="flexChild scroll shrink">
+          <PerlinControls updateValue={this.updateValue} {...this.state.values} />
+        </div>
+        <div className="flexChild">
+          <div style={{ height: '100%', width: '100%' }} ref={this.refCallback}>
+            <P5Wrapper sketch={perlinNoise} width={width} height={height} {...values} />
+          </div>
         </div>
       </div>) :
       (<button onClick={this.toggleApp}>Start the chaos</button>);
-    // return (
-    //   <div style={{ height: '100%', width: '100%' }} ref={this.refCallback}>
-    //     <P5Wrapper sketch={perlinNoise} width={width} height={height} />
-    //   </div>
-    // );
   }
 }
 
