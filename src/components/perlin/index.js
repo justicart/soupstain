@@ -22,6 +22,7 @@ class PerlinNoise extends React.Component {
       strokeWidthDecay: 100,
       strokeOpacityDecay: 100,
       zOffset: 0,
+      fps: false,
     },
     device: 'desktop',
   };
@@ -74,6 +75,10 @@ class PerlinNoise extends React.Component {
   updateValue = (key, value) => {
     this.setState({ values: { ...this.state.values, [key]: value }});
   }
+
+  updateCheckboxValue = (key) => {
+    this.setState({ values: { ...this.state.values, [key]: !this.state.values[key] }});
+  }
   render () {
     const { width, height, values } = this.state;
     return (
@@ -84,13 +89,13 @@ class PerlinNoise extends React.Component {
               <P5Wrapper sketch={perlinNoise} width={width} height={height} {...values} />
             </div>
             {this.state.showMobileControls && <div className="controls">
-              <PerlinControls updateValue={this.updateValue} {...this.state.values} />
+              <PerlinControls updateValue={this.updateValue} updateCheckboxValue={this.updateCheckboxValue} {...this.state.values} />
               <button onClick={this.toggleMobileControls}>Hide Controls</button>
             </div>}
           </div>}
-          {this.state.showApp && this.state.device !== 'mobile' && <div className="rowParent">
+          {this.state.showApp && this.state.device !== 'mobile' && <div className="rowParent" style={{ height: '100%', width: '100%' }}>
             <div className="controls flexChild scroll shrink">
-              <PerlinControls updateValue={this.updateValue} {...this.state.values} />
+              <PerlinControls updateValue={this.updateValue} updateCheckboxValue={this.updateCheckboxValue} {...this.state.values} />
             </div>
             <div className="flexChild">
               <div style={{ height: '100%', width: '100%' }} ref={this.refCallback}>

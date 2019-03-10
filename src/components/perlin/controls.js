@@ -6,6 +6,11 @@ class PerlinControls extends React.Component {
       this.props.updateValue(event.target.name, event.target.value);
     }
   };
+  updateCheckboxValue () {
+    return (event) => {
+      this.props.updateCheckboxValue(event.target.name);
+    }
+  };
   render () {
     const formElements = [
       { name: 'noiseMax', label: 'Noise Max', min: 0, max: 10000, divisor: 1000, round: 3 },
@@ -49,6 +54,8 @@ class PerlinControls extends React.Component {
     return (
       <div>
         {renderForm}
+        <label htmlFor="fps">Show FPS</label>
+        <input name="fps" type="checkbox" value={this.props.fps} onChange={this.updateCheckboxValue()}></input>
       </div>
     );
   }

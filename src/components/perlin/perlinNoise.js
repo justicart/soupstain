@@ -18,6 +18,11 @@ export default function perlinNoise (p) {
   let strokeOpacityDecay;
   let zOffset;
   let iteratorArray = [];
+  let fps = false;
+
+  let currentTime;
+  let timer = new Date();
+  let currentFps = 0;
 
   p.myCustomRedrawAccordingToNewPropsHandler = (props) => {
     width = props.width;
@@ -34,6 +39,7 @@ export default function perlinNoise (p) {
     strokeWidthDecay = props.strokeWidthDecay / 100;
     strokeOpacityDecay = props.strokeOpacityDecay / 100;
     zOffset = props.zOffset / 5000;
+    fps = props.fps;
   };
 
   // Setup function
@@ -45,7 +51,6 @@ export default function perlinNoise (p) {
   p.draw = () => {
     p.resizeCanvas(width, height, true);
     p.translate(width / 2, height / 2);
-    p.noFill();
     iteratorArray.length = count;
     iteratorArray.fill();
     iteratorArray.forEach((c, index) => {
@@ -53,6 +58,7 @@ export default function perlinNoise (p) {
       const calcHeight = (max * (size / 100)) - (spacing * index);
       const calcPhase = phase + (index * twist);
       const calcZoff = zoff - (index * zOffset);
+      p.noFill();
       p.stroke(`rgba(255,255,255,${1 - (((1 / count) * index) * strokeOpacityDecay)})`);
       p.strokeWeight(calcStrokeWeight);
       p.beginShape();
@@ -67,6 +73,19 @@ export default function perlinNoise (p) {
       p.endShape(p5.CLOSE);
       return false;
     })
+    if (fps) {
+      currentTime = new Date();
+      if (currentTime - timer > 250) {
+        currentFps = Math.round(p.frameRate());
+        timer = new Date();
+      }
+      p.textSize(32);
+      p.textAlign(p.CENTER);
+      p.fill('white');
+      p.stroke('black');
+      p.strokeWeight(5)
+      p.text(currentFps, 0, 0);
+    }
     phase += rotate || 0;
     zoff += 0.01;
   }
