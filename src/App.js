@@ -5,6 +5,7 @@ import Stripe from './components/stripe';
 
 import Life from './components/life';
 import PerlinNoise from './components/perlin';
+import StupidUI from './components/stupidui';
 
 class App extends Component {
   constructor () {
@@ -45,7 +46,7 @@ class App extends Component {
     const stripes = [
       { letter: 'S', previewText: 'Conway\'s Game of Life', content: <Life />, top: '0', height: 'calc(100vh + 12.5em)'},
       { letter: 'O', previewText: 'Perlin Noise Loop', content: <PerlinNoise />, top: '0', height: 'calc(100vh + 10.5em)'},
-      { letter: 'U', previewText: 'Some day', content: '', top: '-1.7em', height: 'calc(100vh + 10.5em)'},
+      { letter: 'U', previewText: 'Stupid UI', content: <StupidUI />, top: '-1.7em', height: 'calc(100vh + 10.5em)'},
       { letter: 'P', previewText: 'Some day', content: '', top: '-3.4em', height: 'calc(100vh + 10.5em)'},
       { letter: 'S', previewText: 'Some day', content: '', top: '-5.1em', height: 'calc(100vh + 10.5em)'},
       { letter: 'T', previewText: 'Some day', content: '', top: '-6.8em', height: 'calc(100vh + 10.5em)'},
