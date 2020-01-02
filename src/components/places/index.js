@@ -48,7 +48,10 @@ function Places() {
   };
 
   return (
-    <USAMap customize={mapCustomization} defaultFill={DEFAULT_FILL} />
+    <div>
+      <h1>Oh the Places You'll Go</h1>
+      <USAMap customize={mapCustomization} defaultFill={DEFAULT_FILL} />
+    </div>
   );
 }
 

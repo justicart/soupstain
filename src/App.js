@@ -15,20 +15,24 @@ class App extends Component {
       size: 20,
       selected: undefined,
     };
-    this.calculateLetterSize = this.calculateLetterSize.bind(this);
+    this.calculateSizes = this.calculateSizes.bind(this);
     this.selectStripe = this.selectStripe.bind(this);
   }
 
   componentDidMount () {
-    this.calculateLetterSize();
-    window.addEventListener('resize', this.calculateLetterSize);
+    this.calculateSizes();
+    window.addEventListener('resize', this.calculateSizes);
   }
 
   componentWillUnmount () {
-    window.removeEventListener('resize', this.calculateLetterSize);
+    window.removeEventListener('resize', this.calculateSizes);
   }
 
-  calculateLetterSize () {
+  calculateSizes () {
+    // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
+    let vh = window.innerHeight * 0.01;
+    // Then we set the value in the --vh custom property to the root of the document
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
     this.element = ReactDOM.findDOMNode(this);
     const size = this.element.clientHeight / 9;
     this.setState({ size });
