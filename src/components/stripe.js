@@ -6,6 +6,8 @@ class Stripe extends React.Component {
     super();
     this.state = {
       active: false,
+      peekNext: false,
+      peekPrevious: false,
     };
     this.mouseEnter = this.mouseEnter.bind(this);
     this.mouseLeave = this.mouseLeave.bind(this);
@@ -14,9 +16,9 @@ class Stripe extends React.Component {
 
   mouseEnter () {
     return () => {
-      if (this.props.selected !== this.props.name) {
-        this.setState({ active: true });
-      }
+      const {index, selected} = this.props;
+      const active = selected !== index;
+      this.setState({ active });
     }
   }
   mouseLeave () {
@@ -24,41 +26,70 @@ class Stripe extends React.Component {
       setTimeout(() => this.setState({ active: false }), 200);
     }
   }
-  selectStripe (name, top, height) {
+  selectStripe (index) {
     return () => {
-      if (this.props.selected !== this.props.name) {
-        this.setState({ active: false }, this.props.selectStripe(name, top, height));
+      const {index, selected, selectStripe} = this.props;
+      if (selected !== index) {
+        this.setState({ active: false }, selectStripe(index));
       }
     }
   }
   render () {
-    const selected = this.props.selected === this.props.name;
-    const stripe = this.props.stripe;
-    const small = this.props.selected && this.props.selected !== this.props.name;
+    const {
+      backgroundUrl = './images/bg-clouds-bw.jpg',
+      children,
+      index,
+      letter,
+      preview,
+      reveal,
+      selected,
+      selectStripe,
+      size,
+      stripe,
+    } = this.props;
+    const isSelected = selected === index;
+    const small = selected != null && selected !== index;
+    const previousHidden = selected != null
+      && index < selected - 1;
+    const nextHidden = selected != null
+      && index > selected + 1;
     const classes = classNames(
       'stripe',
       {
         active: this.state.active,
-        selected,
+        selected: isSelected,
         small,
       }
     );
-    const backgroundUrl = this.props.backgroundUrl || './images/bg-clouds-bw.jpg';
-    const reveal = this.props.reveal ? selected : true;
+    const deferReveal = reveal ? isSelected : true;
+    const selectedMultiplier = index === 0 || index === 8 ? 1 : 2;
     return (
       <div
         className={classes}
         onMouseEnter={this.mouseEnter()}
         onMouseLeave={this.mouseLeave()}
-        onClick={this.selectStripe(this.props.name, stripe.top, stripe.height)}
+        onClick={this.selectStripe(index)}
+        style={{
+          height: small
+            ? `${size * .2}px`
+            : isSelected
+              ? `calc(100vh - (${selectedMultiplier} * ${size * .2}px))`
+              : null,
+          marginBottom: nextHidden ? `-${size * .2}px` : null,
+          marginTop: previousHidden ? `-${size * .2}px` : null,
+        }}
       >
         <div className="background" style={{ background: `url(${backgroundUrl}) no-repeat 50% 50%/cover` }}></div>
-        <div className="letter" onClick={this.props.selectStripe()} style={{ fontSize: small ? `${this.props.size * .2}px` : `${this.props.size}px` }}>{this.props.letter}</div>
-        <div className="inner" style={{ height: `calc(100% - ${this.props.size || 20}px)` }}>
-          {reveal && this.props.children}
+        <div
+          className="letter"
+          onClick={selectStripe()}
+          style={{ fontSize: small ? `${size * .2}px` : `${size}px` }}
+        >{letter}</div>
+        <div className="inner" style={{ height: `calc(100% - ${size || 20}px)` }}>
+          {deferReveal && children}
         </div>
         <div className="preview flexChild columnParent flexCenter">
-          {this.props.preview}
+          {preview}
         </div>
       </div>
     );

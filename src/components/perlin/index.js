@@ -69,7 +69,7 @@ class PerlinNoise extends React.Component {
     if (size.width < 640 || size.height < 640) {
       return this.setState({ device: 'mobile' });
     }
-    return false;
+    return null;
   }
 
   updateValue = (key, value) => {

@@ -14,8 +14,6 @@ class App extends Component {
     this.state = {
       size: 20,
       selected: undefined,
-      heightAdjust: undefined,
-      topAdjust: undefined,
     };
     this.calculateLetterSize = this.calculateLetterSize.bind(this);
     this.selectStripe = this.selectStripe.bind(this);
@@ -36,30 +34,31 @@ class App extends Component {
     this.setState({ size });
   }
 
-  selectStripe (selected, topAdjust, heightAdjust) {
+  selectStripe (selected) {
     return () => {
-      this.setState({ selected, heightAdjust, topAdjust })
+      this.setState({ selected })
     }
   }
 
   render() {
-    const { size, selected, heightAdjust, topAdjust } = this.state;
+    const { size, selected } = this.state;
     const stripes = [
-      { letter: 'S', previewText: 'Conway\'s Game of Life', content: <Life />, top: '0', height: 'calc(100vh + 12.5em)'},
-      { letter: 'O', previewText: 'Perlin Noise Loop', content: <PerlinNoise />, top: '0', height: 'calc(100vh + 10.5em)'},
-      { letter: 'U', previewText: 'Stupid UI', content: <StupidUI />, top: '-1.7em', height: 'calc(100vh + 10.5em)'},
-      { letter: 'P', previewText: 'Oh the Places You\'ll Go', content: <Places />, top: '-3.4em', height: 'calc(100vh + 10.5em)'},
-      { letter: 'S', previewText: 'Some day', content: '', top: '-5.1em', height: 'calc(100vh + 10.5em)'},
-      { letter: 'T', previewText: 'Some day', content: '', top: '-6.8em', height: 'calc(100vh + 10.5em)'},
-      { letter: 'A', previewText: 'Some day', content: '', top: '-8.5em', height: 'calc(100vh + 10.5em)'},
-      { letter: 'I', previewText: 'Some day', content: '', top: '-10.2em', height: 'calc(100vh + 10.5em)'},
-      { letter: 'N', previewText: 'Some day', content: '', top: '-11.9em', height: 'calc(100vh + 12.2em)'},
+      { backgroundUrl: './images/tx-chuys.jpg', letter: 'S', previewText: 'Conway\'s Game of Life', content: <Life />},
+      { backgroundUrl: './images/ny-public.jpg', letter: 'O', previewText: 'Perlin Noise Loop', content: <PerlinNoise />},
+      { backgroundUrl: './images/ny-emp.jpg', letter: 'U', previewText: 'Stupid UI', content: <StupidUI />},
+      { backgroundUrl: './images/sf-ggb.jpg', letter: 'P', previewText: 'Oh the Places You\'ll Go', content: <Places />},
+      { letter: 'S', previewText: 'Some day', content: ''},
+      { letter: 'T', previewText: 'Some day', content: ''},
+      { letter: 'A', previewText: 'Some day', content: ''},
+      { letter: 'I', previewText: 'Some day', content: ''},
+      { letter: 'N', previewText: 'Some day', content: ''},
     ]
     const renderStripes = stripes.map((stripe, index) => {
       return (
         <Stripe
+          backgroundUrl={stripe.backgroundUrl}
           key={index}
-          name={`stripe${index + 1}`}
+          index={index}
           letter={stripe.letter}
           preview={<div className="generic">{stripe.previewText}</div>}
           size={size}
@@ -72,10 +71,8 @@ class App extends Component {
         </Stripe>
       )
     });
-    const height = selected ? heightAdjust : '100vh';
-    const top = selected ? topAdjust : '0';
     return (
-      <div className="main columnParent" style={{ height, top }}>
+      <div className="main columnParent">
         {renderStripes}
       </div>
     );
