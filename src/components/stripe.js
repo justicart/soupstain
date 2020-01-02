@@ -45,7 +45,7 @@ class Stripe extends React.Component {
       selected,
       selectStripe,
       size,
-      stripe,
+      vh,
     } = this.props;
     const isSelected = selected === index;
     const small = selected != null && selected !== index;
@@ -67,6 +67,7 @@ class Stripe extends React.Component {
     if (smallSize < 40) {
       smallSize = 40;
     }
+    const innerHeight = 100 * vh - (selectedMultiplier * smallSize);
     return (
       <div
         className={classes}
@@ -77,7 +78,7 @@ class Stripe extends React.Component {
           height: small
             ? `${smallSize}px`
             : isSelected
-              ? `calc(100vh - (${selectedMultiplier} * ${smallSize}px))`
+              ? `${innerHeight}px`
               : null,
           marginBottom: nextHidden ? `-${smallSize}px` : null,
           marginTop: previousHidden ? `-${smallSize}px` : null,

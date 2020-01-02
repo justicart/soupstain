@@ -14,6 +14,7 @@ class App extends Component {
     this.state = {
       size: 20,
       selected: undefined,
+      vh: 0,
     };
     this.calculateSizes = this.calculateSizes.bind(this);
     this.selectStripe = this.selectStripe.bind(this);
@@ -30,12 +31,12 @@ class App extends Component {
 
   calculateSizes () {
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
-    let vh = window.innerHeight * 0.01;
+    const vh = window.innerHeight * 0.01;
     // Then we set the value in the --vh custom property to the root of the document
     document.documentElement.style.setProperty('--vh', `${vh}px`);
     this.element = ReactDOM.findDOMNode(this);
     const size = this.element.clientHeight / 9;
-    this.setState({ size });
+    this.setState({ size, vh });
   }
 
   selectStripe (selected) {
@@ -45,7 +46,7 @@ class App extends Component {
   }
 
   render() {
-    const { size, selected } = this.state;
+    const { size, selected, vh } = this.state;
     const stripes = [
       { backgroundUrl: './images/tx-chuys.jpg', letter: 'S', previewText: 'Conway\'s Game of Life', content: <Life />},
       { backgroundUrl: './images/ny-public.jpg', letter: 'O', previewText: 'Perlin Noise Loop', content: <PerlinNoise />},
@@ -68,8 +69,8 @@ class App extends Component {
           size={size}
           selectStripe={this.selectStripe}
           selected={selected}
-          stripe={stripe}
           reveal
+          vh={vh}
         >
           {stripe.content}
         </Stripe>

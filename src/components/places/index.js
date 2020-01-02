@@ -8,7 +8,8 @@ import './style.css';
 const DEFAULT_FILL = "rgba(0,0,0,.5)";
 const COLOR = "36, 211, 253";
 
-function Places() {
+function Places(props) {
+  const {vh} = props;
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -50,7 +51,11 @@ function Places() {
   return (
     <div>
       <h1>Oh the Places You'll Go</h1>
-      <USAMap customize={mapCustomization} defaultFill={DEFAULT_FILL} />
+      <USAMap
+        customize={mapCustomization}
+        defaultFill={DEFAULT_FILL}
+        height={100 * vh}
+      />
     </div>
   );
 }
