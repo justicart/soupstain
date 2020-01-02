@@ -63,6 +63,10 @@ class Stripe extends React.Component {
     );
     const deferReveal = reveal ? isSelected : true;
     const selectedMultiplier = index === 0 || index === 8 ? 1 : 2;
+    let smallSize = size * .2;
+    if (smallSize < 40) {
+      smallSize = 40;
+    }
     return (
       <div
         className={classes}
@@ -71,19 +75,19 @@ class Stripe extends React.Component {
         onClick={this.selectStripe(index)}
         style={{
           height: small
-            ? `${size * .2}px`
+            ? `${smallSize}px`
             : isSelected
-              ? `calc(100vh - (${selectedMultiplier} * ${size * .2}px))`
+              ? `calc(100vh - (${selectedMultiplier} * ${smallSize}px))`
               : null,
-          marginBottom: nextHidden ? `-${size * .2}px` : null,
-          marginTop: previousHidden ? `-${size * .2}px` : null,
+          marginBottom: nextHidden ? `-${smallSize}px` : null,
+          marginTop: previousHidden ? `-${smallSize}px` : null,
         }}
       >
         <div className="background" style={{ background: `url(${backgroundUrl}) no-repeat 50% 50%/cover` }}></div>
         <div
           className="letter"
           onClick={selectStripe()}
-          style={{ fontSize: small ? `${size * .2}px` : `${size}px` }}
+          style={{ fontSize: small ? `${smallSize}px` : `${size}px` }}
         >{letter}</div>
         <div className="inner" style={{ height: `calc(100% - ${size || 20}px)` }}>
           {deferReveal && children}
