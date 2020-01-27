@@ -1,104 +1,91 @@
 import React from 'react';
+import {useCallback, useContext, useState} from 'react';
 import classNames from 'class-names';
 
-class Stripe extends React.Component {
-  constructor () {
-    super();
-    this.state = {
-      active: false,
-      peekNext: false,
-      peekPrevious: false,
-    };
-    this.mouseEnter = this.mouseEnter.bind(this);
-    this.mouseLeave = this.mouseLeave.bind(this);
-    this.selectStripe = this.selectStripe.bind(this);
-  }
+import {AppContext} from '../AppContext';
 
-  mouseEnter () {
-    return () => {
-      const {index, selected} = this.props;
-      const active = selected !== index;
-      this.setState({ active });
-    }
+function Stripe(
+  {
+    backgroundUrl = './images/bg-clouds-bw.jpg',
+    children,
+    index,
+    letter,
+    preview,
+    reveal,
+    size,
+    vh,
   }
-  mouseLeave () {
-    return () => {
-      setTimeout(() => this.setState({ active: false }), 200);
-    }
+) {
+  const [active, setActive] = useState(false);
+
+  const [selected, setSelected] = useContext(AppContext);
+
+  const mouseEnter = () => {
+    const active = selected !== index;
+    setActive(active);
   }
-  selectStripe (index) {
-    return () => {
-      const {index, selected, selectStripe} = this.props;
-      if (selected !== index) {
-        this.setState({ active: false }, selectStripe(index));
-      }
-    }
+  const mouseLeave = () => {
+    setTimeout(() => setActive(false), 200);
   }
-  render () {
-    const {
-      backgroundUrl = './images/bg-clouds-bw.jpg',
-      children,
-      index,
-      letter,
-      preview,
-      reveal,
-      selected,
-      selectStripe,
-      size,
-      vh,
-    } = this.props;
-    const isSelected = selected === index;
-    const small = selected != null && selected !== index;
-    const previousHidden = selected != null
-      && index < selected - 1;
-    const nextHidden = selected != null
-      && index > selected + 1;
-    const classes = classNames(
-      'stripe',
-      {
-        active: this.state.active,
-        selected: isSelected,
-        small,
-      }
-    );
-    const deferReveal = reveal ? isSelected : true;
-    const selectedMultiplier = index === 0 || index === 8 ? 1 : 2;
-    let smallSize = size * .2;
-    if (smallSize < 40) {
-      smallSize = 40;
+  const selectStripeHandler = useCallback(() => {
+    if (selected === index) {
+      return setSelected(undefined);
     }
-    const innerHeight = 100 * vh - (selectedMultiplier * smallSize);
-    return (
+    setSelected(index);
+    setActive(false);
+  }, [selected])
+
+  const isSelected = selected === index;
+  const small = selected != null && selected !== index;
+  const previousHidden = selected != null
+    && index < selected - 1;
+  const nextHidden = selected != null
+    && index > selected + 1;
+  const classes = classNames(
+    'stripe',
+    {
+      active,
+      selected: isSelected,
+      small,
+    }
+  );
+  const deferReveal = reveal ? isSelected : true;
+  const selectedMultiplier = index === 0 || index === 8 ? 1 : 2;
+  let smallSize = size * .2;
+  if (smallSize < 40) {
+    smallSize = 40;
+  }
+  const innerHeight = 100 * vh - (selectedMultiplier * smallSize);
+  return (
+    <div
+      className={classes}
+      onMouseEnter={mouseEnter}
+      onMouseLeave={mouseLeave}
+      onClick={isSelected ? null : selectStripeHandler}
+      style={{
+        height: small
+          ? `${smallSize}px`
+          : isSelected
+            ? `${innerHeight}px`
+            : null,
+        marginBottom: nextHidden ? `-${smallSize}px` : null,
+        marginTop: previousHidden ? `-${smallSize}px` : null,
+      }}
+    >
+      <div className="background" style={{ background: `url(${backgroundUrl}) no-repeat 50% 50%/cover` }}></div>
       <div
-        className={classes}
-        onMouseEnter={this.mouseEnter()}
-        onMouseLeave={this.mouseLeave()}
-        onClick={this.selectStripe(index)}
-        style={{
-          height: small
-            ? `${smallSize}px`
-            : isSelected
-              ? `${innerHeight}px`
-              : null,
-          marginBottom: nextHidden ? `-${smallSize}px` : null,
-          marginTop: previousHidden ? `-${smallSize}px` : null,
-        }}
-      >
-        <div className="background" style={{ background: `url(${backgroundUrl}) no-repeat 50% 50%/cover` }}></div>
-        <div
-          className="letter"
-          onClick={selectStripe()}
-          style={{ fontSize: small ? `${smallSize}px` : `${size}px` }}
-        >{letter}</div>
-        <div className="inner" style={{ height: `calc(100% - ${size || 20}px)` }}>
-          {deferReveal && children}
-        </div>
-        <div className="preview flexChild columnParent flexCenter">
-          {preview}
-        </div>
+        className="letter"
+        onClick={selectStripeHandler}
+        style={{ fontSize: small ? `${smallSize}px` : `${size}px` }}
+      >{letter}</div>
+      <div className="inner" style={{ height: `calc(100% - ${size || 20}px)` }}>
+        {deferReveal && children}
       </div>
-    );
-  }
+      <div className="preview flexChild columnParent flexCenter">
+        {preview}
+      </div>
+    </div>
+  );
 }
 
 export default Stripe;
