@@ -21,17 +21,17 @@ function Places(props) {
     })
   }, [setData]);
 
-  const visitedStates = {};
-  data != null && data.filter(row => row.have_been_to !== '').map(row => {
-    return visitedStates[row.abbreviation] = {
-      fill: `rgba(${COLOR}, 0.5)`,
-    }
-  });
-
   const traveledThroughStates = {};
   data != null && data.filter(row => row.traveled_through !== '').map(row => {
     return traveledThroughStates[row.abbreviation] = {
       fill: `rgba(${COLOR}, 0.2)`,
+    }
+  });
+
+  const visitedStates = {};
+  data != null && data.filter(row => row.have_been_to !== '').map(row => {
+    return visitedStates[row.abbreviation] = {
+      fill: `rgba(${COLOR}, 0.5)`,
     }
   });
 
@@ -43,8 +43,8 @@ function Places(props) {
   });
 
   const mapCustomization = {
-    ...visitedStates,
     ...traveledThroughStates,
+    ...visitedStates,
     ...livedInStates
   };
 
