@@ -1,5 +1,5 @@
 import React from 'react';
-import Tabletop from 'tabletop';
+import Papa from 'papaparse';
 import USAMap from "react-usa-map";
 import {useEffect, useState} from 'react';
 
@@ -13,11 +13,12 @@ function Places(props) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    Tabletop.init({
-      key: 'https://docs.google.com/spreadsheets/d/138fGAaCD7ffFta0G6LKypg_cj6thnMYrZFLj2vfTxCs/edit?usp=sharing',
-      simpleSheet: true,
-    }).then((data, tabletop) => {
-      setData(data);
+    Papa.parse('https://docs.google.com/spreadsheets/d/e/2PACX-1vS6z77YCTPUTgVlOl31fsujkeVDYNMknQ6HtEmAkPkRZftWH76dCpNIsU9RfKhIHlMaeptYbrG5eZ6W/pub?output=csv', {
+      download: true,
+      header: true,
+      complete: (results) => {
+        setData(results.data);
+      }
     })
   }, [setData]);
 
