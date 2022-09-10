@@ -1,23 +1,25 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import Grid from './../../components/life/grid';
 import Throbber from '../throbber';
 
-class Life extends React.Component {
-  state = {
-    showLife: false,
+function Life() {
+  const [showLife, setShowLife] = useState(false);
+  const timeout = useRef();
+
+  useEffect(() => {
+    timeout.current = setTimeout(toggleLife, 1000);
+    return () => {
+      clearTimeout(timeout.current);
+    }
+  }, []);
+
+  const toggleLife = () => {
+    setShowLife(!showLife);
   }
-  componentDidMount () {
-    setTimeout(this.toggleLife, 1000);
-  }
-  toggleLife = () => {
-    this.setState({ showLife: !this.state.showLife });
-  }
-  render () {
-    return this.state.showLife ?
-      (<Grid />) :
-      (<Throbber />);
-  };
+  return showLife ?
+    (<Grid />) :
+    (<Throbber />);
 }
 
 export default Life;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import '../style.css';
 
@@ -10,8 +10,8 @@ import Block from './../../../components/life/block';
 
 const BUTTON_ROW_HEIGHT = 100;
 
-class Grid extends React.Component {
-  state = {
+function Grid() {
+  const [state, setState] = useState({
     width: 0,
     height: 0,
     currentGrid: [],
@@ -24,28 +24,26 @@ class Grid extends React.Component {
     relativeNumbersIndex: undefined,
     relativeNumbers: [],
     showSettings: false,
-  }
-
-  componentDidMount () {
-    // this.getSize();
-    window.addEventListener('resize', this.getSize);
-  }
-
-  componentWillUnmount () {
-    window.removeEventListener('resize', this.getSize);
-  }
-
-  refCallback = element => {
+  });
+  const elementRef = useRef();
+  const refCallback = useCallback(element => {
     if (element) {
-      this.elementRef = element;
-      this.getSize();
+      elementRef.current = element;
+      getSize();
     }
-  };
+  }, []);
 
-  getSize = () => {
-    const size = this.elementRef.getBoundingClientRect();
+  useEffect(() => {
+    window.addEventListener('resize', getSize);
+    return () => {
+      window.removeEventListener('resize', getSize);
+    }
+  });
+
+  const getSize = () => {
+    const size = elementRef.current.getBoundingClientRect();
     const width = size.width;
-    let newGridWidth = this.state.gridWidth;
+    let newGridWidth = state.gridWidth;
     if (width < 400) {
       newGridWidth = 18;
     }
@@ -54,29 +52,29 @@ class Grid extends React.Component {
     const rows = Math.floor((height - BUTTON_ROW_HEIGHT) / newGridWidth);
     const numberOfBlocks = columns * rows;
     const emptyGrid = (new Array(numberOfBlocks)).fill();
-    const currentGrid = [...this.state.currentGrid];
-    this.setState({ currentGrid, emptyGrid, columns, rows, gridWidth: newGridWidth });
+    const currentGrid = [...state.currentGrid];
+    setState({ ...state, currentGrid, emptyGrid, columns, rows, gridWidth: newGridWidth });
   }
 
-  updateNextGrid = (index) => {
-    const nextGrid = this.state.nextGrid;
-    nextGrid[index] = this.checkBlock(index);
+  const updateNextGrid = (index) => {
+    const nextGrid = state.nextGrid;
+    nextGrid[index] = checkBlock(index);
     if (index === nextGrid.length - 1) {
-      return this.setState({ currentGrid: nextGrid, nextGrid: [] });
+      return setState({ ...state, currentGrid: nextGrid, nextGrid: [] });
     }
-    return this.setState({ nextGrid });
+    return setState({ ...state, nextGrid });
   }
 
-  generateRandomGrid = () => {
+  const generateRandomGrid = () => {
     const currentGrid = [];
-    this.state.emptyGrid.map((block, index) => {
+    state.emptyGrid.map((block, index) => {
       return currentGrid[index] = Math.random() < 0.5;
     });
-    this.setState({ currentGrid });
+    setState({ ...state, currentGrid });
   }
 
-  checkBlock = (index) => {
-    const { columns, currentGrid } = this.state;
+  const checkBlock = (index) => {
+    const { columns, currentGrid } = state;
     const firstInRow = index % columns === 0;
     const lastInRow = index % columns === columns - 1;
     const firstInColumn = index < columns;
@@ -108,89 +106,89 @@ class Grid extends React.Component {
     }
   }
 
-  mutate = () => {
-    const emptyGrid = this.state.emptyGrid;
-    emptyGrid.forEach((block, index) => {
-      return this.updateNextGrid(index);
+  async function mutate() {
+    const emptyGrid = state.emptyGrid || [];
+    await emptyGrid.forEach((block, index) => {
+      return updateNextGrid(index);
     })
   }
 
-  glider = () => {
-    const startingIndex = (2 * this.state.columns) + 2;
-    const grid = generateGlider(startingIndex, this.state.columns);
-    this.setState({ currentGrid: grid });
+  const glider = () => {
+    const startingIndex = (2 * state.columns) + 2;
+    const grid = generateGlider(startingIndex, state.columns);
+    setState({ ...state, currentGrid: grid });
   }
 
-  addGlider = (index) => {
+  const addGlider = (index) => {
     return () => {
-      const currentGrid = generateGlider(index, this.state.columns, this.state.currentGrid)
-      this.setState({ currentGrid });
+      const currentGrid = generateGlider(index, state.columns, state.currentGrid)
+      setState({ ...state, currentGrid });
     }
   }
 
-  glidergun = () => {
-    const isEven = this.state.rows % 2 === 0
-    const half = this.state.emptyGrid.length / 2;
-    const middleIndex = Math.floor(isEven ? half + (this.state.columns / 2) : half);
-    const grid = generateGlidergun(middleIndex, this.state.columns)
-    this.setState({ currentGrid: grid });
+  const glidergun = () => {
+    const isEven = state.rows % 2 === 0
+    const half = state.emptyGrid.length / 2;
+    const middleIndex = Math.floor(isEven ? half + (state.columns / 2) : half);
+    const grid = generateGlidergun(middleIndex, state.columns)
+    setState({ ...state, currentGrid: grid });
   }
 
-  addGlidergun = (index) => {
+  const addGlidergun = (index) => {
     return () => {
-      const currentGrid = generateGlidergun(index, this.state.columns, this.state.currentGrid)
-      this.setState({ currentGrid });
+      const currentGrid = generateGlidergun(index, state.columns, state.currentGrid)
+      setState({ ...state, currentGrid });
     }
   }
 
-  pulsar = () => {
-    const isEven = this.state.rows % 2 === 0
-    const half = this.state.emptyGrid.length / 2;
-    const middleIndex = Math.floor(isEven ? half + (this.state.columns / 2) : half);
-    const grid = generatePulsar(middleIndex, this.state.columns)
-    this.setState({ currentGrid: grid });
+  const pulsar = () => {
+    const isEven = state.rows % 2 === 0
+    const half = state.emptyGrid.length / 2;
+    const middleIndex = Math.floor(isEven ? half + (state.columns / 2) : half);
+    const grid = generatePulsar(middleIndex, state.columns)
+    setState({ ...state, currentGrid: grid });
   }
 
-  addPulsar = (index) => {
+  const addPulsar = (index) => {
     return () => {
-      const currentGrid = generatePulsar(index, this.state.columns, this.state.currentGrid)
-      this.setState({ currentGrid });
+      const currentGrid = generatePulsar(index, state.columns, state.currentGrid)
+      setState({ ...state, currentGrid });
     }
   }
 
-  updateWidth = (event) => {
-    this.setState({ gridWidthDraft: event.target.value });
+  const updateWidth = (event) => {
+    setState({ ...state, gridWidthDraft: event.target.value });
   }
 
-  changeWidth = (event) => {
+  const changeWidth = (event) => {
     event.preventDefault();
-    this.setState({ gridWidth: parseInt(this.state.gridWidthDraft, 10) }, this.getSize);
+    setState({ ...state, gridWidth: parseInt(state.gridWidthDraft, 10) }, getSize);
   }
 
-  toggleNumbers = () => {
-    const showNumbers = !this.state.showNumbers;
-    this.setState({ showNumbers });
+  const toggleNumbers = () => {
+    const showNumbers = !state.showNumbers;
+    setState({ ...state, showNumbers });
   }
 
-  highlightIndex = (index) => {
+  const highlightIndex = (index) => {
     return () => {
-      const highlightedIndex = this.state.highlightedIndex === index ? undefined : index;
-      this.setState({ highlightedIndex })
+      const highlightedIndex = state.highlightedIndex === index ? undefined : index;
+      setState({ ...state, highlightedIndex })
     }
   }
 
-  toggleIndex = (index) => {
+  const toggleIndex = (index) => {
     return () => {
-      const currentGrid = this.state.currentGrid;
+      const currentGrid = state.currentGrid;
       currentGrid[index] = !currentGrid[index];
-      this.setState({ currentGrid });
+      setState({ ...state, currentGrid });
     }
   }
 
-  toggleRelativeNumbers = (index) => {
+  const toggleRelativeNumbers = (index) => {
     return () => {
-      const { columns, emptyGrid } = this.state;
-      const relativeNumbersIndex = this.state.relativeNumbersIndex === index ? undefined : index;
+      const { columns, emptyGrid } = state;
+      const relativeNumbersIndex = state.relativeNumbersIndex === index ? undefined : index;
       const indexColPos = relativeNumbersIndex % columns;
       const rowFirst = relativeNumbersIndex - indexColPos;
       const rowLast = rowFirst + columns - 1;
@@ -208,76 +206,77 @@ class Grid extends React.Component {
           return `${cols}c ${offset}`;
         })
         : [];
-      this.setState({ relativeNumbersIndex, relativeNumbers });
+      setState({ ...state, relativeNumbersIndex, relativeNumbers });
     }
   }
 
-  clear = () => {
+  const clear = () => {
     const currentGrid = [];
-    this.state.emptyGrid.map((block, index) => {
+    state.emptyGrid.map((block, index) => {
       return currentGrid[index] = false;
     });
-    this.setState({ currentGrid });
+    setState({ ...state, currentGrid });
   }
 
-  toggleSettings = () => {
-    this.setState({ showSettings: !this.state.showSettings });
+  const toggleSettings = () => {
+    setState({ ...state, showSettings: !state.showSettings });
   }
 
-  render () {
-    const { emptyGrid, highlightedIndex, gridWidth } = this.state;
-    const gridArray = emptyGrid || [];
-    const renderGrid = gridArray.map((block, index) => {
-      return (
-        <Block
-          gridWidth={gridWidth}
-          index={index}
-          highlightedIndex={highlightedIndex}
-          key={index}
-          highlightIndex={this.highlightIndex}
-          toggleIndex={this.toggleIndex}
-          relativeNumbersIndex={this.relativeNumbersIndex}
-          toggleRelativeNumbers={this.toggleRelativeNumbers}
-          addPulsar={this.addPulsar}
-          addGlider={this.addGlider}
-          addGlidergun={this.addGlidergun}
-          {...this.state}
-        />
-      )
-    })
+  const { emptyGrid, highlightedIndex, gridWidth } = state;
+  const gridArray = emptyGrid || [];
+  const renderGrid = gridArray.map((block, index) => {
     return (
-      <div style={{ height: '100%', width: '100%' }} ref={this.refCallback}>
-        <div className="flexWrap">
-          {renderGrid}
+      <Block
+        gridWidth={gridWidth}
+        index={index}
+        highlightedIndex={state.highlightedIndex}
+        key={index}
+        highlightIndex={highlightIndex}
+        toggleIndex={toggleIndex}
+        relativeNumbersIndex={state.relativeNumbersIndex}
+        toggleRelativeNumbers={toggleRelativeNumbers}
+        addPulsar={addPulsar}
+        addGlider={addGlider}
+        addGlidergun={addGlidergun}
+        {...state}
+      />
+    )
+  })
+
+
+  return (
+    <div style={{ height: '100%', width: '100%' }} ref={refCallback}>
+      <div className="flexWrap">
+        {renderGrid}
+      </div>
+      <div className="controls">
+        <div style={{ marginBottom: '5px' }}>
+          <button onClick={mutate} className="mutate">Mutate</button>
+          {/* <button onClick={playMutate} className="mutate">Play</button> */}
         </div>
-        <div className="controls">
-          <div style={{ marginBottom: '5px' }}>
-            <button onClick={this.mutate} className="mutate">Mutate</button>
-          </div>
-          <div>
-            <button onClick={this.generateRandomGrid}>Random</button>
-            <button onClick={this.glider}>Glider</button>
-            <button onClick={this.glidergun}>Glider Gun</button>
-            <button onClick={this.pulsar}>Pulsar</button>
-            &nbsp;&nbsp;
-            <button onClick={this.clear}>Clear</button>
-            &nbsp;&nbsp;
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-              <button onClick={this.toggleSettings}>Settings</button>
-              {this.state.showSettings && <div className="settings">
-                <label><input type="checkbox" onClick={this.toggleNumbers}/> Show numbers</label>
-                &nbsp;&nbsp;
-                <form>
-                  <input type="number" style={{ width: '75px' }} onChange={this.updateWidth} />
-                  <button onClick={this.changeWidth}>Size</button>
-                </form>
-              </div>}
-            </div>
+        <div>
+          <button onClick={generateRandomGrid}>Random</button>
+          <button onClick={glider}>Glider</button>
+          <button onClick={glidergun}>Glider Gun</button>
+          <button onClick={pulsar}>Pulsar</button>
+          &nbsp;&nbsp;
+          <button onClick={clear}>Clear</button>
+          &nbsp;&nbsp;
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <button onClick={toggleSettings}>Settings</button>
+            {state.showSettings && <div className="settings">
+              <label><input type="checkbox" onClick={toggleNumbers}/> Show numbers</label>
+              &nbsp;&nbsp;
+              <form>
+                <input type="number" style={{ width: '75px' }} onChange={updateWidth} />
+                <button onClick={changeWidth}>Size</button>
+              </form>
+            </div>}
           </div>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default Grid;
