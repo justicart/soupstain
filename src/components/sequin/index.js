@@ -37,7 +37,7 @@ function Sequin() {
   const sequinSize = 20;
   const cols = Math.floor((size.width || 0) / sequinSize);
   const rows = Math.floor((size.height || 0) / sequinSize);
-  const gap = 2;
+  // const gap = 2;
   const sequins = parseInt(cols * rows, 10);
   const sequinArray = (new Array(sequins)).fill();
 

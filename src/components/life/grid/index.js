@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import useInterval from '../../../hooks/useInterval';
 
 import '../style.css';
 
@@ -9,16 +10,19 @@ import generateGlidergun from './../../../components/life/generators/glidergun.j
 import Block from './../../../components/life/block';
 
 const BUTTON_ROW_HEIGHT = 100;
+const LARGE_GRID_WIDTH = 30;
+const SMALL_GRID_WIDTH = 18;
 
 function Grid() {
   const [state, setState] = useState({
     width: 0,
     height: 0,
     currentGrid: [],
+    emptyGrid: [],
     nextGrid: [],
     running: false,
     gridWidthDraft: '',
-    gridWidth: 30,
+    gridWidth: LARGE_GRID_WIDTH,
     showNumbers: false,
     highlightedIndex: undefined,
     relativeNumbersIndex: undefined,
@@ -26,12 +30,7 @@ function Grid() {
     showSettings: false,
   });
   const elementRef = useRef();
-  const refCallback = useCallback(element => {
-    if (element) {
-      elementRef.current = element;
-      getSize();
-    }
-  }, []);
+  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     window.addEventListener('resize', getSize);
@@ -40,29 +39,35 @@ function Grid() {
     }
   });
 
+  useInterval(() => {
+    mutate()
+  }, playing ? 100 : null);
+
+  const refCallback = useCallback(element => {
+    if (element) {
+      elementRef.current = element;
+      getSize();
+    }
+  }, []);
+
   const getSize = () => {
     const size = elementRef.current.getBoundingClientRect();
     const width = size.width;
     let newGridWidth = state.gridWidth;
     if (width < 400) {
-      newGridWidth = 18;
+      newGridWidth = SMALL_GRID_WIDTH;
+    } else {
+      newGridWidth = LARGE_GRID_WIDTH;
     }
     const height = size.height;
     const columns = Math.floor(width / newGridWidth);
     const rows = Math.floor((height - BUTTON_ROW_HEIGHT) / newGridWidth);
     const numberOfBlocks = columns * rows;
-    const emptyGrid = (new Array(numberOfBlocks)).fill();
+    const emptyGrid = (new Array(numberOfBlocks)).fill(false);
     const currentGrid = [...state.currentGrid];
+    console.log('resize', numberOfBlocks, emptyGrid.length, currentGrid.length)
+    // TODO resize doesn't work reliably
     setState({ ...state, currentGrid, emptyGrid, columns, rows, gridWidth: newGridWidth });
-  }
-
-  const updateNextGrid = (index) => {
-    const nextGrid = state.nextGrid;
-    nextGrid[index] = checkBlock(index);
-    if (index === nextGrid.length - 1) {
-      return setState({ ...state, currentGrid: nextGrid, nextGrid: [] });
-    }
-    return setState({ ...state, nextGrid });
   }
 
   const generateRandomGrid = () => {
@@ -106,11 +111,16 @@ function Grid() {
     }
   }
 
-  async function mutate() {
-    const emptyGrid = state.emptyGrid || [];
-    await emptyGrid.forEach((block, index) => {
-      return updateNextGrid(index);
+  const playMutate = () => {
+    setPlaying(!playing);
+  }
+
+  const mutate = () => {
+    const newGrid = [...state.emptyGrid] || [];
+    newGrid.forEach((_block, index) => {
+      newGrid[index] = checkBlock(index);
     })
+    setState({ ...state, currentGrid: newGrid });
   }
 
   const glider = () => {
@@ -223,13 +233,14 @@ function Grid() {
   }
 
   const { emptyGrid, highlightedIndex, gridWidth } = state;
-  const gridArray = emptyGrid || [];
-  const renderGrid = gridArray.map((block, index) => {
+
+  const renderGrid = emptyGrid.map((_block, index) => {
     return (
       <Block
+        currentGrid={state.currentGrid}
         gridWidth={gridWidth}
         index={index}
-        highlightedIndex={state.highlightedIndex}
+        highlightedIndex={highlightedIndex}
         key={index}
         highlightIndex={highlightIndex}
         toggleIndex={toggleIndex}
@@ -238,7 +249,7 @@ function Grid() {
         addPulsar={addPulsar}
         addGlider={addGlider}
         addGlidergun={addGlidergun}
-        {...state}
+        // {...state}
       />
     )
   })
@@ -252,7 +263,9 @@ function Grid() {
       <div className="controls">
         <div style={{ marginBottom: '5px' }}>
           <button onClick={mutate} className="mutate">Mutate</button>
-          {/* <button onClick={playMutate} className="mutate">Play</button> */}
+          <button onClick={playMutate} className={`mutate ${playing ? 'playing' : ''}`}>
+            {playing ? 'Playing' : 'Play'}
+          </button>
         </div>
         <div>
           <button onClick={generateRandomGrid}>Random</button>
