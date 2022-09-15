@@ -2,7 +2,6 @@ import React from 'react';
 import classNames from 'classnames';
 
 function Block({
-  block,
   currentGrid,
   gridWidth,
   showNumbers,
@@ -17,9 +16,6 @@ function Block({
   addGlidergun,
   toggleRelativeNumbers,
 }) {
-  // useEffect(() => {
-  //   console.log('grid', currentGrid);
-  // }, [currentGrid])
   const fill = currentGrid[index] === true;
   const selected = highlightedIndex === index;
   const relative = relativeNumbersIndex === index;

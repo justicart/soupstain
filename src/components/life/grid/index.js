@@ -65,7 +65,7 @@ function Grid() {
     const numberOfBlocks = columns * rows;
     const emptyGrid = (new Array(numberOfBlocks)).fill(false);
     const currentGrid = [...state.currentGrid];
-    console.log('resize', numberOfBlocks, emptyGrid.length, currentGrid.length)
+    // console.log('resize', numberOfBlocks, emptyGrid.length, currentGrid.length)
     // TODO resize doesn't work reliably
     setState({ ...state, currentGrid, emptyGrid, columns, rows, gridWidth: newGridWidth });
   }
