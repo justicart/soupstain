@@ -31,6 +31,7 @@ function Grid() {
   });
   const elementRef = useRef();
   const [playing, setPlaying] = useState(false);
+  const [playingSpeed, setPlayingSpeed] = useState(100);
 
   useEffect(() => {
     window.addEventListener('resize', getSize);
@@ -41,7 +42,7 @@ function Grid() {
 
   useInterval(() => {
     mutate()
-  }, playing ? 100 : null);
+  }, playing ? (playingSpeed > 100 ? playingSpeed : 100) : null);
 
   const refCallback = useCallback(element => {
     if (element) {
@@ -266,6 +267,12 @@ function Grid() {
           <button onClick={playMutate} className={`mutate ${playing ? 'playing' : ''}`}>
             {playing ? 'Playing' : 'Play'}
           </button>
+          <input
+            type="number"
+            value={playingSpeed}
+            onChange={(e) => setPlayingSpeed(e.target.value)}
+            style={{width: 50}}
+          />
         </div>
         <div>
           <button onClick={generateRandomGrid}>Random</button>
