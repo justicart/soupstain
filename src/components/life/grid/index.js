@@ -19,6 +19,8 @@ function Grid() {
   const {
     currentGrid,
     setCurrentGrid,
+    grid,
+    setGrid,
     relativeNumbersIndex,
     setRelativeNumbersIndex,
     // relativeNumbers,
@@ -29,11 +31,7 @@ function Grid() {
   const [state, setState] = useState({
     width: 0,
     height: 0,
-    emptyGrid: [],
-    nextGrid: [],
     running: false,
-    gridWidthDraft: '',
-    gridWidth: LARGE_GRID_WIDTH,
     showNumbers: false,
     highlightedIndex: undefined,
   });
@@ -62,33 +60,38 @@ function Grid() {
   const getSize = () => {
     const size = elementRef.current.getBoundingClientRect();
     const width = size.width;
-    let newGridWidth = state.gridWidth;
+    let newGridWidth;
     if (width < 400) {
       newGridWidth = SMALL_GRID_WIDTH;
     } else {
       newGridWidth = LARGE_GRID_WIDTH;
     }
     const height = size.height;
-    const columns = Math.floor(width / newGridWidth);
-    const rows = Math.floor((height - BUTTON_ROW_HEIGHT) / newGridWidth);
-    const numberOfBlocks = columns * rows;
-    const emptyGrid = (new Array(numberOfBlocks)).fill(false);
+    const numColumns = Math.floor(width / newGridWidth);
+    const numRows = Math.floor((height - BUTTON_ROW_HEIGHT) / newGridWidth);
+    const numberOfBlocks = numColumns * numRows;
+    const newEmptyGrid = (new Array(numberOfBlocks)).fill(false);
     // const currentGrid = [...state.currentGrid];
     // console.log('resize', numberOfBlocks, emptyGrid.length, currentGrid.length)
     // TODO resize doesn't work reliably
-    setState({ ...state, emptyGrid, columns, rows, gridWidth: newGridWidth });
+    const newGrid = {
+      columns: numColumns, 
+      rows: numRows, 
+      gridWidth: newGridWidth, 
+      emptyGrid: newEmptyGrid,
+    }
+    setGrid(newGrid);
   }
 
   const generateRandomGrid = () => {
-    const workingGrid = [];
-    state.emptyGrid.map((block, index) => {
-      return workingGrid[index] = Math.random() < 0.5;
+    const workingGrid = grid.emptyGrid.map((block, index) => {
+      return Math.random() < 0.5;
     });
     setCurrentGrid(workingGrid);
   }
 
   const checkBlock = (index) => {
-    const { columns } = state;
+    const { columns } = grid;
     const firstInRow = index % columns === 0;
     const lastInRow = index % columns === columns - 1;
     const firstInColumn = index < columns;
@@ -125,44 +128,34 @@ function Grid() {
   }
 
   const mutate = () => {
-    const workingGrid = [...state.emptyGrid] || [];
-    workingGrid.forEach((_block, index) => {
-      workingGrid[index] = checkBlock(index);
+    const workingGrid = grid.emptyGrid.map((_block, index) => {
+      return checkBlock(index);
     })
     setCurrentGrid(workingGrid);
   }
 
   const glider = () => {
-    const startingIndex = (3 * state.columns) + 3;
-    const workingGrid = generator(startingIndex, state.columns, shapes.glider);
+    const startingIndex = (3 * grid.columns) + 3;
+    const workingGrid = generator(startingIndex, grid.columns, shapes.glider, grid.emptyGrid);
     setCurrentGrid(workingGrid);
   }
 
   const addGlider = (index) => {
-    const workingGrid = generator(index, state.columns, shapes.glider, state.currentGrid)
+    const workingGrid = generator(index, grid.columns, shapes.glider, currentGrid)
     setCurrentGrid(workingGrid);
   }
 
   const centerShape = (shape) => {
-    const isEven = state.rows % 2 === 0
-    const half = state.emptyGrid.length / 2;
-    const middleIndex = Math.floor(isEven ? half + (state.columns / 2) : half);
-    const workingGrid = generator(middleIndex, state.columns, shapes[shape])
+    const isEven = grid.rows % 2 === 0;
+    const half = grid.emptyGrid.length / 2;
+    const middleIndex = Math.floor(isEven ? half + (grid.columns / 2) : half);
+    const workingGrid = generator(middleIndex, grid.columns, shapes[shape], grid.emptyGrid)
     setCurrentGrid(workingGrid);
   }
 
   const addCenterShape = (shape, index) => {
-    const workingGrid = generator(index, state.columns, shapes[shape], state.currentGrid)
+    const workingGrid = generator(index, grid.columns, shapes[shape], currentGrid)
     setCurrentGrid(workingGrid);
-  }
-
-  const updateWidth = (event) => {
-    setState({ ...state, gridWidthDraft: event.target.value });
-  }
-
-  const changeWidth = (event) => {
-    event.preventDefault();
-    setState({ ...state, gridWidth: parseInt(state.gridWidthDraft, 10) }, getSize);
   }
 
   const toggleNumbers = () => {
@@ -187,7 +180,7 @@ function Grid() {
       setRelativeNumbers([]);
       return null;
     }
-    const { columns, emptyGrid } = state;
+    const { columns, emptyGrid } = grid;
     const newRelativeNumbersIndex = index;
     const indexColPos = newRelativeNumbersIndex % columns;
     const rowFirst = newRelativeNumbersIndex - indexColPos;
@@ -210,7 +203,7 @@ function Grid() {
   }
 
   const clear = () => {
-    const workingGrid = [...state.emptyGrid];
+    const workingGrid = [...grid.emptyGrid];
     setCurrentGrid(workingGrid);
   }
 
@@ -218,7 +211,8 @@ function Grid() {
     setShowSettings(!showSettings);
   }
 
-  const { emptyGrid, highlightedIndex, gridWidth } = state;
+  const { emptyGrid, gridWidth } = grid;
+  const { highlightedIndex, showNumbers } = state;
 
   const renderGrid = emptyGrid.map((_block, index) => {
     return (
@@ -232,7 +226,7 @@ function Grid() {
         toggleRelativeNumbers={toggleRelativeNumbers}
         addCenterShape={addCenterShape}
         addGlider={addGlider}
-        showNumbers={state.showNumbers}
+        showNumbers={showNumbers}
       />
     )
   })
@@ -268,12 +262,7 @@ function Grid() {
           <div style={{ position: 'relative', display: 'inline-block' }}>
             <button onClick={toggleSettings}>Settings</button>
             {showSettings && <div className="settings">
-              <label><input type="checkbox" onClick={toggleNumbers}/> Show numbers</label>
-              &nbsp;&nbsp;
-              <form>
-                <input type="number" style={{ width: '75px' }} onChange={updateWidth} />
-                <button onClick={changeWidth}>Size</button>
-              </form>
+              <label><input type="checkbox" checked={state.showNumbers} onClick={toggleNumbers}/> Show numbers</label>
             </div>}
           </div>
         </div>
