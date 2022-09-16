@@ -1,23 +1,34 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import useInterval from '../../../hooks/useInterval';
+import { LifeContext } from '../../../contexts/LifeContext';
+
+import Formula from '../components/formula';
 
 import '../style.css';
 
-import generatePulsar from './../../../components/life/generators/pulsar.js';
-import generateGlider from './../../../components/life/generators/glider.js';
-import generateGlidergun from './../../../components/life/generators/glidergun.js';
-
 import Block from './../../../components/life/block';
+
+import shapes from './../generators/shapes.json';
+import generator from '../generators/generator';
 
 const BUTTON_ROW_HEIGHT = 100;
 const LARGE_GRID_WIDTH = 30;
 const SMALL_GRID_WIDTH = 18;
 
 function Grid() {
+  const {
+    currentGrid,
+    setCurrentGrid,
+    relativeNumbersIndex,
+    setRelativeNumbersIndex,
+    // relativeNumbers,
+    setRelativeNumbers,
+    showSettings, 
+    setShowSettings, 
+  } = useContext(LifeContext);
   const [state, setState] = useState({
     width: 0,
     height: 0,
-    currentGrid: [],
     emptyGrid: [],
     nextGrid: [],
     running: false,
@@ -25,9 +36,6 @@ function Grid() {
     gridWidth: LARGE_GRID_WIDTH,
     showNumbers: false,
     highlightedIndex: undefined,
-    relativeNumbersIndex: undefined,
-    relativeNumbers: [],
-    showSettings: false,
   });
   const elementRef = useRef();
   const [playing, setPlaying] = useState(false);
@@ -65,22 +73,22 @@ function Grid() {
     const rows = Math.floor((height - BUTTON_ROW_HEIGHT) / newGridWidth);
     const numberOfBlocks = columns * rows;
     const emptyGrid = (new Array(numberOfBlocks)).fill(false);
-    const currentGrid = [...state.currentGrid];
+    // const currentGrid = [...state.currentGrid];
     // console.log('resize', numberOfBlocks, emptyGrid.length, currentGrid.length)
     // TODO resize doesn't work reliably
-    setState({ ...state, currentGrid, emptyGrid, columns, rows, gridWidth: newGridWidth });
+    setState({ ...state, emptyGrid, columns, rows, gridWidth: newGridWidth });
   }
 
   const generateRandomGrid = () => {
-    const currentGrid = [];
+    const workingGrid = [];
     state.emptyGrid.map((block, index) => {
-      return currentGrid[index] = Math.random() < 0.5;
+      return workingGrid[index] = Math.random() < 0.5;
     });
-    setState({ ...state, currentGrid });
+    setCurrentGrid(workingGrid);
   }
 
   const checkBlock = (index) => {
-    const { columns, currentGrid } = state;
+    const { columns } = state;
     const firstInRow = index % columns === 0;
     const lastInRow = index % columns === columns - 1;
     const firstInColumn = index < columns;
@@ -117,54 +125,35 @@ function Grid() {
   }
 
   const mutate = () => {
-    const newGrid = [...state.emptyGrid] || [];
-    newGrid.forEach((_block, index) => {
-      newGrid[index] = checkBlock(index);
+    const workingGrid = [...state.emptyGrid] || [];
+    workingGrid.forEach((_block, index) => {
+      workingGrid[index] = checkBlock(index);
     })
-    setState({ ...state, currentGrid: newGrid });
+    setCurrentGrid(workingGrid);
   }
 
   const glider = () => {
-    const startingIndex = (2 * state.columns) + 2;
-    const grid = generateGlider(startingIndex, state.columns);
-    setState({ ...state, currentGrid: grid });
+    const startingIndex = (3 * state.columns) + 3;
+    const workingGrid = generator(startingIndex, state.columns, shapes.glider);
+    setCurrentGrid(workingGrid);
   }
 
   const addGlider = (index) => {
-    return () => {
-      const currentGrid = generateGlider(index, state.columns, state.currentGrid)
-      setState({ ...state, currentGrid });
-    }
+    const workingGrid = generator(index, state.columns, shapes.glider, state.currentGrid)
+    setCurrentGrid(workingGrid);
   }
 
-  const glidergun = () => {
+  const centerShape = (shape) => {
     const isEven = state.rows % 2 === 0
     const half = state.emptyGrid.length / 2;
     const middleIndex = Math.floor(isEven ? half + (state.columns / 2) : half);
-    const grid = generateGlidergun(middleIndex, state.columns)
-    setState({ ...state, currentGrid: grid });
+    const workingGrid = generator(middleIndex, state.columns, shapes[shape])
+    setCurrentGrid(workingGrid);
   }
 
-  const addGlidergun = (index) => {
-    return () => {
-      const currentGrid = generateGlidergun(index, state.columns, state.currentGrid)
-      setState({ ...state, currentGrid });
-    }
-  }
-
-  const pulsar = () => {
-    const isEven = state.rows % 2 === 0
-    const half = state.emptyGrid.length / 2;
-    const middleIndex = Math.floor(isEven ? half + (state.columns / 2) : half);
-    const grid = generatePulsar(middleIndex, state.columns)
-    setState({ ...state, currentGrid: grid });
-  }
-
-  const addPulsar = (index) => {
-    return () => {
-      const currentGrid = generatePulsar(index, state.columns, state.currentGrid)
-      setState({ ...state, currentGrid });
-    }
+  const addCenterShape = (shape, index) => {
+    const workingGrid = generator(index, state.columns, shapes[shape], state.currentGrid)
+    setCurrentGrid(workingGrid);
   }
 
   const updateWidth = (event) => {
@@ -182,55 +171,51 @@ function Grid() {
   }
 
   const highlightIndex = (index) => {
-    return () => {
-      const highlightedIndex = state.highlightedIndex === index ? undefined : index;
-      setState({ ...state, highlightedIndex })
-    }
+    const highlightedIndex = state.highlightedIndex === index ? undefined : index;
+    setState({ ...state, highlightedIndex })
   }
 
   const toggleIndex = (index) => {
-    return () => {
-      const currentGrid = state.currentGrid;
-      currentGrid[index] = !currentGrid[index];
-      setState({ ...state, currentGrid });
-    }
+    const workingGrid = [...currentGrid];
+    workingGrid[index] = !workingGrid[index];
+    setCurrentGrid(workingGrid);
   }
 
   const toggleRelativeNumbers = (index) => {
-    return () => {
-      const { columns, emptyGrid } = state;
-      const relativeNumbersIndex = state.relativeNumbersIndex === index ? undefined : index;
-      const indexColPos = relativeNumbersIndex % columns;
-      const rowFirst = relativeNumbersIndex - indexColPos;
-      const rowLast = rowFirst + columns - 1;
-      const relativeNumbers = relativeNumbersIndex ?
-        emptyGrid.map((block, index) => {
-          const colPos = index % columns;
-          const offset = colPos - indexColPos;
-          let cols = 0;
-          if (index < rowFirst) {
-            cols = Math.ceil((rowFirst - index) / columns);
-          }
-          if (index > rowLast) {
-            cols = Math.ceil((index - rowLast) / columns)
-          }
-          return `${cols}c ${offset}`;
-        })
-        : [];
-      setState({ ...state, relativeNumbersIndex, relativeNumbers });
+    if (relativeNumbersIndex === index) {
+      setRelativeNumbersIndex(null);
+      setRelativeNumbers([]);
+      return null;
     }
+    const { columns, emptyGrid } = state;
+    const newRelativeNumbersIndex = index;
+    const indexColPos = newRelativeNumbersIndex % columns;
+    const rowFirst = newRelativeNumbersIndex - indexColPos;
+    const rowLast = rowFirst + columns - 1;
+    const newRelativeNumbers = emptyGrid.map((_block, i) => {
+      const colPos = i % columns;
+      const offset = colPos - indexColPos;
+      let cols = 0;
+      if (i < rowFirst) {
+        cols = (Math.ceil((rowFirst - i) / columns)) * -1;
+      }
+      if (i > rowLast) {
+        cols = Math.ceil((i - rowLast) / columns)
+      }
+      // return `${cols}c ${offset}`;
+      return [cols, offset];
+    });
+    setRelativeNumbersIndex(newRelativeNumbersIndex);
+    setRelativeNumbers(newRelativeNumbers);
   }
 
   const clear = () => {
-    const currentGrid = [];
-    state.emptyGrid.map((block, index) => {
-      return currentGrid[index] = false;
-    });
-    setState({ ...state, currentGrid });
+    const workingGrid = [...state.emptyGrid];
+    setCurrentGrid(workingGrid);
   }
 
   const toggleSettings = () => {
-    setState({ ...state, showSettings: !state.showSettings });
+    setShowSettings(!showSettings);
   }
 
   const { emptyGrid, highlightedIndex, gridWidth } = state;
@@ -238,19 +223,16 @@ function Grid() {
   const renderGrid = emptyGrid.map((_block, index) => {
     return (
       <Block
-        currentGrid={state.currentGrid}
         gridWidth={gridWidth}
         index={index}
         highlightedIndex={highlightedIndex}
         key={index}
         highlightIndex={highlightIndex}
         toggleIndex={toggleIndex}
-        relativeNumbersIndex={state.relativeNumbersIndex}
         toggleRelativeNumbers={toggleRelativeNumbers}
-        addPulsar={addPulsar}
+        addCenterShape={addCenterShape}
         addGlider={addGlider}
-        addGlidergun={addGlidergun}
-        // {...state}
+        showNumbers={state.showNumbers}
       />
     )
   })
@@ -277,14 +259,15 @@ function Grid() {
         <div>
           <button onClick={generateRandomGrid}>Random</button>
           <button onClick={glider}>Glider</button>
-          <button onClick={glidergun}>Glider Gun</button>
-          <button onClick={pulsar}>Pulsar</button>
+          <button onClick={() => centerShape('glidergun')}>Glider Gun</button>
+          <button onClick={() => centerShape('pulsar')}>Pulsar</button>
+          <button onClick={() => centerShape('pentadeca')}>Penta-Deca</button>
           &nbsp;&nbsp;
           <button onClick={clear}>Clear</button>
           &nbsp;&nbsp;
           <div style={{ position: 'relative', display: 'inline-block' }}>
             <button onClick={toggleSettings}>Settings</button>
-            {state.showSettings && <div className="settings">
+            {showSettings && <div className="settings">
               <label><input type="checkbox" onClick={toggleNumbers}/> Show numbers</label>
               &nbsp;&nbsp;
               <form>
@@ -294,6 +277,7 @@ function Grid() {
             </div>}
           </div>
         </div>
+        <Formula />
       </div>
     </div>
   );

@@ -3,7 +3,8 @@ import {useEffect, useState, useRef} from 'react';
 import './App.css';
 import Stripe from './components/stripe';
 
-import {AppProvider} from './AppContext';
+import {SequineProvider} from './contexts/SequineContext';
+import {LifeProvider} from './contexts/LifeContext';
 
 import Life from './components/life';
 import PerlinNoise from './components/perlin';
@@ -64,11 +65,13 @@ function App() {
     )
   });
   return (
-    <AppProvider>
-      <div className="main columnParent" ref={element}>
-        {renderStripes}
-      </div>
-    </AppProvider>
+    <LifeProvider>
+      <SequineProvider>
+        <div className="main columnParent" ref={element}>
+          {renderStripes}
+        </div>
+      </SequineProvider>
+    </LifeProvider>
   );
 }
 

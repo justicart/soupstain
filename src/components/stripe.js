@@ -2,7 +2,7 @@ import React from 'react';
 import {useCallback, useContext, useState} from 'react';
 import classNames from 'class-names';
 
-import {AppContext} from '../AppContext';
+import {SequineContext} from '../contexts/SequineContext';
 
 function Stripe(
   {
@@ -18,7 +18,7 @@ function Stripe(
 ) {
   const [active, setActive] = useState(false);
 
-  const [selected, setSelected] = useContext(AppContext);
+  const [selected, setSelected] = useContext(SequineContext);
 
   const mouseEnter = () => {
     const active = selected !== index;

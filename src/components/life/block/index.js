@@ -1,21 +1,23 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import { LifeContext } from '../../../contexts/LifeContext';
 import classNames from 'classnames';
 
 function Block({
-  currentGrid,
   gridWidth,
   showNumbers,
   index,
   highlightIndex,
   highlightedIndex,
-  relativeNumbersIndex,
-  relativeNumbers,
   toggleIndex,
-  addPulsar,
+  addCenterShape,
   addGlider,
-  addGlidergun,
   toggleRelativeNumbers,
 }) {
+  const {
+    currentGrid,
+    relativeNumbersIndex,
+    relativeNumbers,
+  } = useContext(LifeContext);
   const fill = currentGrid[index] === true;
   const selected = highlightedIndex === index;
   const relative = relativeNumbersIndex === index;
@@ -24,6 +26,7 @@ function Block({
     selected,
     relative,
   });
+
   return (
     <div
       className={classes}
@@ -32,21 +35,23 @@ function Block({
         width: gridWidth,
         height: gridWidth
       }}
-      onClick={highlightIndex(index)}
+      onClick={() => highlightIndex(index)}
     >
       <div className="blockInner">
         <div>{showNumbers && index}</div>
-        <div>{relativeNumbersIndex && relativeNumbers[index]}</div>
+        {/* <div>{relativeNumbersIndex && relativeNumbers[index]}</div> */}
+        <div>{relativeNumbersIndex && `${relativeNumbers[index][0]}, ${relativeNumbers[index][1]}`}</div>
       </div>
       {selected && <div className="hud">
-        <div className="x">x</div>
-        <div className="toggle" onClick={toggleIndex(index)}></div>
+        <div className="x">&times;</div>
+        <div className="toggle" onClick={() => toggleIndex(index)}></div>
         <div className="buttonBar">
-          <button onClick={addPulsar(index)}>Pulsar</button>
-          <button onClick={addGlider(index)}>Glider</button>
-          <button onClick={addGlidergun(index)}>Glider Gun</button>
+          <button onClick={() => addCenterShape('pulsar', index)}>Pulsar</button>
+          <button onClick={() => addGlider(index)}>Glider</button>
+          <button onClick={() => addCenterShape('glidergun', index)}>Glider Gun</button>
+          <button onClick={() => addCenterShape('pentadeca', index)}>Penta-Deca</button>
           <hr/>
-          <button onClick={toggleRelativeNumbers(index)}>Relative</button>
+          <button onClick={() => toggleRelativeNumbers(index)}>Relative</button>
         </div>
       </div>}
     </div>
