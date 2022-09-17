@@ -2,21 +2,23 @@ import React, {useContext} from 'react';
 import { LifeContext } from '../../../contexts/LifeContext';
 import classNames from 'classnames';
 
+import shapes from './../generators/shapes.json';
+
 function Block({
-  gridWidth,
   showNumbers,
   index,
   highlightIndex,
   highlightedIndex,
   toggleIndex,
-  addCenterShape,
-  addGlider,
+  addShapeAtIndex,
   toggleRelativeNumbers,
 }) {
   const {
+    grid,
     currentGrid,
     relativeNumbersIndex,
     relativeNumbers,
+    oneClick,
   } = useContext(LifeContext);
   const fill = currentGrid[index] === true;
   const selected = highlightedIndex === index;
@@ -27,6 +29,18 @@ function Block({
     relative,
   });
 
+  const {gridWidth} = grid;
+
+  const handleClick = () => {
+    oneClick === true
+      ? toggleIndex(index)
+      : highlightIndex(index);
+  }
+
+  const presets = Object.keys(shapes).map(shape => {
+    return <button onClick={() => addShapeAtIndex(shape, index)}>{shape}</button>
+  })
+
   return (
     <div
       className={classes}
@@ -35,21 +49,17 @@ function Block({
         width: gridWidth,
         height: gridWidth
       }}
-      onClick={() => highlightIndex(index)}
+      onClick={handleClick}
     >
       <div className="blockInner">
         <div>{showNumbers && index}</div>
-        {/* <div>{relativeNumbersIndex && relativeNumbers[index]}</div> */}
         <div>{relativeNumbersIndex && `${relativeNumbers[index][0]}, ${relativeNumbers[index][1]}`}</div>
       </div>
       {selected && <div className="hud">
         <div className="x">&times;</div>
         <div className="toggle" onClick={() => toggleIndex(index)}></div>
         <div className="buttonBar">
-          <button onClick={() => addCenterShape('pulsar', index)}>Pulsar</button>
-          <button onClick={() => addGlider(index)}>Glider</button>
-          <button onClick={() => addCenterShape('glidergun', index)}>Glider Gun</button>
-          <button onClick={() => addCenterShape('pentadeca', index)}>Penta-Deca</button>
+          {presets}
           <hr/>
           <button onClick={() => toggleRelativeNumbers(index)}>Relative</button>
         </div>

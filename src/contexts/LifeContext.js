@@ -10,6 +10,7 @@ export const LifeContext = React.createContext({
   relativeNumbersIndex: null, setRelativeNumbersIndex: () => {},
   relativeNumbers: [], setRelativeNumbers: () => {},
   showSettings: false, setShowSettings: () => {},
+  oneClick: false, setOneClick: () => {},
 })
 
 export const LifeProvider = (props) => {
@@ -18,6 +19,7 @@ export const LifeProvider = (props) => {
   const [relativeNumbersIndex, setRelativeNumbersIndex] = useState(false);
   const [relativeNumbers, setRelativeNumbers] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [oneClick, setOneClick] = useState(false);
   
   return (
     <LifeContext.Provider value={{
@@ -26,6 +28,7 @@ export const LifeProvider = (props) => {
       relativeNumbersIndex, setRelativeNumbersIndex,
       relativeNumbers, setRelativeNumbers,
       showSettings, setShowSettings,
+      oneClick, setOneClick,
     }}>
       {props.children}
     </LifeContext.Provider>

@@ -12,7 +12,7 @@ import shapes from './../generators/shapes.json';
 import generator from '../generators/generator';
 
 const BUTTON_ROW_HEIGHT = 100;
-const LARGE_GRID_WIDTH = 30;
+const LARGE_GRID_WIDTH = 18;
 const SMALL_GRID_WIDTH = 18;
 
 function Grid() {
@@ -26,7 +26,9 @@ function Grid() {
     // relativeNumbers,
     setRelativeNumbers,
     showSettings, 
-    setShowSettings, 
+    setShowSettings,
+    oneClick,
+    setOneClick,
   } = useContext(LifeContext);
   const [state, setState] = useState({
     width: 0,
@@ -134,18 +136,7 @@ function Grid() {
     setCurrentGrid(workingGrid);
   }
 
-  const glider = () => {
-    const startingIndex = (3 * grid.columns) + 3;
-    const workingGrid = generator(startingIndex, grid.columns, shapes.glider, grid.emptyGrid);
-    setCurrentGrid(workingGrid);
-  }
-
-  const addGlider = (index) => {
-    const workingGrid = generator(index, grid.columns, shapes.glider, currentGrid)
-    setCurrentGrid(workingGrid);
-  }
-
-  const centerShape = (shape) => {
+  const addShapeAtCenter = (shape) => {
     const isEven = grid.rows % 2 === 0;
     const half = grid.emptyGrid.length / 2;
     const middleIndex = Math.floor(isEven ? half + (grid.columns / 2) : half);
@@ -153,7 +144,7 @@ function Grid() {
     setCurrentGrid(workingGrid);
   }
 
-  const addCenterShape = (shape, index) => {
+  const addShapeAtIndex = (shape, index) => {
     const workingGrid = generator(index, grid.columns, shapes[shape], currentGrid)
     setCurrentGrid(workingGrid);
   }
@@ -211,23 +202,27 @@ function Grid() {
     setShowSettings(!showSettings);
   }
 
-  const { emptyGrid, gridWidth } = grid;
+  const { emptyGrid } = grid;
   const { highlightedIndex, showNumbers } = state;
 
   const renderGrid = emptyGrid.map((_block, index) => {
     return (
       <Block
-        gridWidth={gridWidth}
         index={index}
         highlightedIndex={highlightedIndex}
         key={index}
         highlightIndex={highlightIndex}
         toggleIndex={toggleIndex}
         toggleRelativeNumbers={toggleRelativeNumbers}
-        addCenterShape={addCenterShape}
-        addGlider={addGlider}
+        addShapeAtIndex={addShapeAtIndex}
         showNumbers={showNumbers}
       />
+    )
+  })
+
+  const presets = Object.keys(shapes).map((shape) => {
+    return (
+      <button onClick={() => addShapeAtCenter(shape)}>{shape}</button>
     )
   })
 
@@ -243,28 +238,32 @@ function Grid() {
           <button onClick={playMutate} className={`mutate ${playing ? 'playing' : ''}`}>
             {playing ? 'Playing' : 'Play'}
           </button>
-          <input
-            type="number"
-            value={playingSpeed}
-            onChange={(e) => setPlayingSpeed(e.target.value)}
-            style={{width: 50}}
-          />
-        </div>
-        <div>
-          <button onClick={generateRandomGrid}>Random</button>
-          <button onClick={glider}>Glider</button>
-          <button onClick={() => centerShape('glidergun')}>Glider Gun</button>
-          <button onClick={() => centerShape('pulsar')}>Pulsar</button>
-          <button onClick={() => centerShape('pentadeca')}>Penta-Deca</button>
-          &nbsp;&nbsp;
-          <button onClick={clear}>Clear</button>
           &nbsp;&nbsp;
           <div style={{ position: 'relative', display: 'inline-block' }}>
             <button onClick={toggleSettings}>Settings</button>
             {showSettings && <div className="settings">
-              <label><input type="checkbox" checked={state.showNumbers} onClick={toggleNumbers}/> Show numbers</label>
+              <div><label><input type="checkbox" checked={state.showNumbers} onClick={toggleNumbers}/> Show numbers</label></div>
+              <div><label><input type="checkbox" checked={oneClick} onClick={() => setOneClick(!oneClick)}/> One Click</label></div>
+              <div>
+                <label>
+                  <input
+                    type="number"
+                    value={playingSpeed}
+                    onChange={(e) => setPlayingSpeed(e.target.value)}
+                    style={{width: 50}}
+                  />
+                  Speed
+                </label>
+              </div>
             </div>}
           </div>
+        </div>
+        <div>
+          <button onClick={generateRandomGrid}>Random</button>
+          &nbsp;&nbsp;
+          {presets}
+          &nbsp;&nbsp;
+          <button onClick={clear}>Clear</button>
         </div>
         <Formula />
       </div>
