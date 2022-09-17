@@ -18,6 +18,6 @@ export default function Formula() {
   }, '')
 
   return (
-    <textarea>{formulaString}</textarea>
+    <textarea style={{width: '100%'}}>{formulaString}</textarea>
   )
 }

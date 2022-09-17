@@ -3,22 +3,22 @@ import { LifeContext } from '../../../contexts/LifeContext';
 import classNames from 'classnames';
 
 import shapes from './../generators/shapes.json';
+import generator from '../generators/generator';
 
 function Block({
   showNumbers,
   index,
-  highlightIndex,
-  highlightedIndex,
-  toggleIndex,
-  addShapeAtIndex,
   toggleRelativeNumbers,
 }) {
   const {
     grid,
     currentGrid,
+    setCurrentGrid,
     relativeNumbersIndex,
     relativeNumbers,
     oneClick,
+    highlightedIndex,
+    setHighlightedIndex
   } = useContext(LifeContext);
   const fill = currentGrid[index] === true;
   const selected = highlightedIndex === index;
@@ -37,8 +37,24 @@ function Block({
       : highlightIndex(index);
   }
 
+  const highlightIndex = (index) => {
+    const newHighlightedIndex = highlightedIndex === index ? undefined : index;
+    setHighlightedIndex(newHighlightedIndex);
+  }
+
+  const toggleIndex = (index) => {
+    const workingGrid = [...currentGrid];
+    workingGrid[index] = !workingGrid[index];
+    setCurrentGrid(workingGrid);
+  }
+
+  const addShapeAtIndex = (shape, index) => {
+    const workingGrid = generator(index, grid.columns, shapes[shape], currentGrid)
+    setCurrentGrid(workingGrid);
+  }
+
   const presets = Object.keys(shapes).map(shape => {
-    return <button onClick={() => addShapeAtIndex(shape, index)}>{shape}</button>
+    return <button onClick={() => addShapeAtIndex(shape, index)} key="shape">{shape}</button>
   })
 
   return (

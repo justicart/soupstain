@@ -22,8 +22,6 @@ function Grid() {
     grid,
     setGrid,
     relativeNumbersIndex,
-    setRelativeNumbersIndex,
-    // relativeNumbers,
     setRelativeNumbers,
     showSettings, 
     setShowSettings,
@@ -35,7 +33,6 @@ function Grid() {
     height: 0,
     running: false,
     showNumbers: false,
-    highlightedIndex: undefined,
   });
   const elementRef = useRef();
   const [playing, setPlaying] = useState(false);
@@ -144,31 +141,14 @@ function Grid() {
     setCurrentGrid(workingGrid);
   }
 
-  const addShapeAtIndex = (shape, index) => {
-    const workingGrid = generator(index, grid.columns, shapes[shape], currentGrid)
-    setCurrentGrid(workingGrid);
-  }
-
   const toggleNumbers = () => {
     const showNumbers = !state.showNumbers;
     setState({ ...state, showNumbers });
   }
 
-  const highlightIndex = (index) => {
-    const highlightedIndex = state.highlightedIndex === index ? undefined : index;
-    setState({ ...state, highlightedIndex })
-  }
-
-  const toggleIndex = (index) => {
-    const workingGrid = [...currentGrid];
-    workingGrid[index] = !workingGrid[index];
-    setCurrentGrid(workingGrid);
-  }
-
   const toggleRelativeNumbers = (index) => {
     if (relativeNumbersIndex === index) {
-      setRelativeNumbersIndex(null);
-      setRelativeNumbers([]);
+      setRelativeNumbers(null, []);
       return null;
     }
     const { columns, emptyGrid } = grid;
@@ -189,8 +169,7 @@ function Grid() {
       // return `${cols}c ${offset}`;
       return [cols, offset];
     });
-    setRelativeNumbersIndex(newRelativeNumbersIndex);
-    setRelativeNumbers(newRelativeNumbers);
+    setRelativeNumbers(newRelativeNumbersIndex, newRelativeNumbers);
   }
 
   const clear = () => {
@@ -203,18 +182,14 @@ function Grid() {
   }
 
   const { emptyGrid } = grid;
-  const { highlightedIndex, showNumbers } = state;
+  const { showNumbers } = state;
 
   const renderGrid = emptyGrid.map((_block, index) => {
     return (
       <Block
         index={index}
-        highlightedIndex={highlightedIndex}
         key={index}
-        highlightIndex={highlightIndex}
-        toggleIndex={toggleIndex}
         toggleRelativeNumbers={toggleRelativeNumbers}
-        addShapeAtIndex={addShapeAtIndex}
         showNumbers={showNumbers}
       />
     )
@@ -222,7 +197,7 @@ function Grid() {
 
   const presets = Object.keys(shapes).map((shape) => {
     return (
-      <button onClick={() => addShapeAtCenter(shape)}>{shape}</button>
+      <button onClick={() => addShapeAtCenter(shape)} key={shape}>{shape}</button>
     )
   })
 
