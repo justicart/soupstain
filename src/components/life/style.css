@@ -35,6 +35,9 @@
 .block.relative .blockInner {
   border-color: white;
 }
+.block.ghosted .blockInner {
+  border-color: #24d3fd;
+}
 .hud {
   position: absolute;
   width: 200%;
@@ -100,6 +103,6 @@ hr {
   min-width: 150px
 }
 
-button.playing {
+button.selected {
   background: #24d3fd;
 }

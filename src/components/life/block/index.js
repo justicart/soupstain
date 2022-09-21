@@ -6,8 +6,11 @@ import shapes from './../generators/shapes.json';
 import generator from '../generators/generator';
 
 function Block({
-  showNumbers,
+  draftGrid,
+  draftShape,
+  ghostShape,
   index,
+  showNumbers,
   toggleRelativeNumbers,
 }) {
   const {
@@ -23,15 +26,20 @@ function Block({
   const fill = currentGrid[index] === true;
   const selected = highlightedIndex === index;
   const relative = relativeNumbersIndex === index;
+  const ghosted = draftGrid[index] === true;
   const classes = classNames('block', {
     fill,
     selected,
     relative,
+    ghosted,
   });
 
   const {gridWidth} = grid;
 
   const handleClick = () => {
+    if (draftShape != null && draftShape !== '') {
+      return addShapeAtIndex(draftShape, index);
+    }
     oneClick === true
       ? toggleIndex(index)
       : highlightIndex(index);
@@ -53,8 +61,14 @@ function Block({
     setCurrentGrid(workingGrid);
   }
 
+  const handleMouseEnter = () => {
+    if (draftShape != null && draftShape !== '') {
+      return ghostShape(draftShape, index)
+    }
+  }
+
   const presets = Object.keys(shapes).map(shape => {
-    return <button onClick={() => addShapeAtIndex(shape, index)} key="shape">{shape}</button>
+    return <button onClick={() => addShapeAtIndex(shape, index)} key={`${shape}_dropdown`}>{shape}</button>
   })
 
   return (
@@ -66,6 +80,7 @@ function Block({
         height: gridWidth
       }}
       onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
     >
       <div className="blockInner">
         <div>{showNumbers && index}</div>

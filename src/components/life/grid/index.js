@@ -37,6 +37,8 @@ function Grid() {
   const elementRef = useRef();
   const [playing, setPlaying] = useState(false);
   const [playingSpeed, setPlayingSpeed] = useState(100);
+  const [draftGrid, setDraftGrid] = useState([]);
+  const [draftShape, setDraftShape] = useState();
 
   useEffect(() => {
     window.addEventListener('resize', getSize);
@@ -44,6 +46,12 @@ function Grid() {
       window.removeEventListener('resize', getSize);
     }
   });
+
+  useEffect(() => {
+    if (draftShape == null) {
+      setDraftGrid([]);
+    }
+  }, [draftShape])
 
   useInterval(() => {
     mutate()
@@ -141,6 +149,11 @@ function Grid() {
     setCurrentGrid(workingGrid);
   }
 
+  const ghostShape = (draftShape, index) => {
+    const workingGrid = generator(index, grid.columns, shapes[draftShape], grid.emptyGrid);
+    setDraftGrid(workingGrid);
+  }
+
   const toggleNumbers = () => {
     const showNumbers = !state.showNumbers;
     setState({ ...state, showNumbers });
@@ -187,6 +200,9 @@ function Grid() {
   const renderGrid = emptyGrid.map((_block, index) => {
     return (
       <Block
+        draftGrid={draftGrid}
+        draftShape={draftShape}
+        ghostShape={ghostShape}
         index={index}
         key={index}
         toggleRelativeNumbers={toggleRelativeNumbers}
@@ -197,20 +213,31 @@ function Grid() {
 
   const presets = Object.keys(shapes).map((shape) => {
     return (
-      <button onClick={() => addShapeAtCenter(shape)} key={shape}>{shape}</button>
+      <button onClick={() => addShapeAtCenter(shape)} key={`${shape}_presets`}>{shape}</button>
+    )
+  })
+  
+  const presetsDraft = Object.keys(shapes).map((shape) => {
+    const selected = shape === draftShape;
+    return (
+      <button
+        className={selected ? 'selected' : ''}
+        key={`${shape}_drafts`}
+        onClick={() => setDraftShape(selected ? null : shape)}
+      >{shape}</button>
     )
   })
 
 
   return (
     <div style={{ height: '100%', width: '100%' }} ref={refCallback}>
-      <div className="flexWrap">
+      <div className="flexWrap" onMouseLeave={() => setDraftGrid([])}>
         {renderGrid}
       </div>
       <div className="controls">
         <div style={{ marginBottom: '5px' }}>
           <button onClick={mutate} className="mutate">Mutate</button>
-          <button onClick={playMutate} className={`mutate ${playing ? 'playing' : ''}`}>
+          <button onClick={playMutate} className={`mutate ${playing ? 'selected' : ''}`}>
             {playing ? 'Playing' : 'Play'}
           </button>
           &nbsp;&nbsp;
@@ -236,7 +263,8 @@ function Grid() {
         <div>
           <button onClick={generateRandomGrid}>Random</button>
           &nbsp;&nbsp;
-          {presets}
+          {/* {presets} */}
+          {presetsDraft}
           &nbsp;&nbsp;
           <button onClick={clear}>Clear</button>
         </div>
