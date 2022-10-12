@@ -55,7 +55,7 @@ function Grid() {
 
   useInterval(() => {
     mutate()
-  }, playing ? (playingSpeed > 100 ? playingSpeed : 100) : null);
+  }, playing ? (playingSpeed > 16 ? playingSpeed : 16) : null);
 
   const refCallback = useCallback(element => {
     if (element) {
@@ -240,6 +240,7 @@ function Grid() {
           <button onClick={playMutate} className={`mutate ${playing ? 'selected' : ''}`}>
             {playing ? 'Playing' : 'Play'}
           </button>
+          <input type="range" name="speed" min="10" max="1000" onChange={(e) => setPlayingSpeed(e.target.value)} />
           &nbsp;&nbsp;
           <div style={{ position: 'relative', display: 'inline-block' }}>
             <button onClick={toggleSettings}>Settings</button>
