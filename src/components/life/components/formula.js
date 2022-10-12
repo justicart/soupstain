@@ -25,6 +25,6 @@ export default function Formula() {
   }
 
   return !relativeNumbers ? null : (
-    <textarea style={{width: '100%'}} value={formulaString}></textarea>
+    <textarea style={{width: '100%'}} value={formulaString} readOnly></textarea>
   )
 }
