@@ -15,17 +15,24 @@ export const LifeContext = React.createContext({
 })
 
 export const LifeProvider = (props) => {
-  const [currentGrid, setCurrentGrid] = useState(false);
-  const [grid, setGrid] = useState(GRID);
-  const [highlightedIndex, setHighlightedIndex] = useState(false);
-  const [relativeNumbersIndex, setRelativeNumbersIndex] = useState(false);
-  const [relativeNumbers, setRelativeNumbersArray] = useState(false);
+  const [currentGrid, setCurrentGrid] = useState([]);
+  const [grid, setGridData] = useState(GRID);
+  const [highlightedIndex, setHighlightedIndex] = useState();
+  const [relativeNumbersIndex, setRelativeNumbersIndex] = useState();
+  const [relativeNumbers, setRelativeNumbersArray] = useState();
   const [showSettings, setShowSettings] = useState(false);
   const [oneClick, setOneClick] = useState(false);
 
   const setRelativeNumbers = (index, array) => {
     setRelativeNumbersIndex(index);
     setRelativeNumbersArray(array);
+  }
+
+  function setGrid(newGridData) {
+    setGridData(newGridData);
+    if (currentGrid.length < 1) {
+      setCurrentGrid(newGridData.emptyGrid);
+    }
   }
   
   return (
