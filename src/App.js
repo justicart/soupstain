@@ -10,6 +10,7 @@ import Life from './components/life';
 import PerlinNoise from './components/perlin';
 import StupidUI from './components/stupidui';
 import Places from './components/places';
+import Sudoku from './components/sudoku';
 import Sequin from './components/sequin';
 
 const stripes = [
@@ -17,11 +18,11 @@ const stripes = [
   { backgroundUrl: './images/ny-public.jpg', letter: 'O', previewText: 'Perlin Noise Loop', content: <PerlinNoise />},
   { backgroundUrl: './images/ny-emp.jpg', letter: 'U', previewText: 'Stupid UI', content: <StupidUI />},
   { backgroundUrl: './images/sf-ggb.jpg', letter: 'P', previewText: 'Oh the Places You\'ll Go', content: <Places />},
-  { letter: 'S', previewText: 'Sequin Pillow (WIP)', content: <Sequin />},
+  { letter: 'S', previewText: 'Sudoku', content: <Sudoku />},
   { letter: 'T', previewText: 'Some day', content: ''},
   { letter: 'A', previewText: 'Some day', content: ''},
   { letter: 'I', previewText: 'Some day', content: ''},
-  { letter: 'N', previewText: 'Some day', content: ''},
+  { letter: 'N', previewText: 'Sequin Pillow (WIP)', content: <Sequin />},
 ];
 
 function App() {

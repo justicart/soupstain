@@ -1351,6 +1351,7 @@ clap@^1.0.9:
 class-names@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/class-names/-/class-names-1.0.0.tgz#8646070361d87a83f643261047ed22834e646945"
+  integrity sha512-AQL0OLcu6D5hTwPcY78UgQ0JMS5cR1eYFV60C6V9WNMKVgyXi+CSGYuuWUAVo/6+Z2JRk6VBTn1XO5U94SqBww==
   dependencies:
     classnames "^2.2.5"
 
