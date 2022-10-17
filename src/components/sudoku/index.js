@@ -13,7 +13,7 @@ function createBoard() {
   for (var i = 0; i < arraySize; i++) {
     const row = Math.floor(i / 9);
     const col = i % 9;
-    blankBoard[i] = {...cellShape, row, col};
+    blankBoard[i] = {...cellShape, row, col, pencil: [], centerPencil: []};
     // TEST DATA
     blankBoard[i].number = testBoard[i];
     blankBoard[i].isGiven = testBoard[i] != null;
@@ -75,6 +75,28 @@ export default function Sudoku() {
     setValidation(newValidation)
   }
 
+  function addPencil(num) {
+    if (board[selectedCell].isGiven) {
+      return;
+    }
+    const newBoard = [...board];
+    newBoard[selectedCell].pencil.push(num);
+    newBoard[selectedCell].pencil.sort(function(a, b) {
+      return a - b;
+    });
+    setBoard(newBoard);
+  }
+  
+  function deletePencil(num) {
+    if (board[selectedCell].isGiven) {
+      return;
+    }
+    const newBoard = [...board];
+    newBoard[selectedCell].pencil = newBoard[selectedCell].pencil
+      .filter(item => item !== num);
+    setBoard(newBoard);
+  }
+
   function setSelectedCellNumber(num) {
     if (board[selectedCell].isGiven) {
       return;
@@ -94,6 +116,12 @@ export default function Sudoku() {
     setSelectedCellNumber(number)
   }
   
+  function handlePencilClick(num) {
+    board[selectedCell].pencil.indexOf(num) > -1
+      ? deletePencil(num)
+      : addPencil(num);
+  }
+
   return (
     <div>
       <h1>Sudoku</h1>
@@ -121,6 +149,13 @@ export default function Sudoku() {
                   key={index}
                   onClick={() => setSelectedCell(index)}
                 >
+                  <div className="pencilGrid">
+                    {
+                      cell.pencil.map(pencilNumber => {
+                        return <div className="pencil" key={pencilNumber}>{pencilNumber}</div>
+                      })
+                    }
+                  </div>
                   <div className="number">{cell.number}</div>
                 </div>
               )
@@ -128,12 +163,36 @@ export default function Sudoku() {
           }
         </div>
         <div className="controls">
+          <div className="title">Pencil</div>
+          <div className="pencilBoard">
+            {
+              numbers.map(number => {
+                const isSelected = selectedCell != null && board[selectedCell].pencil.indexOf(number) > -1;
+                const classes = classNames(
+                  'numberCell',
+                  {
+                    selected: isSelected,
+                  },
+                )
+                return (
+                  <div
+                    className={classes}
+                    key={number}
+                    onClick={() => {handlePencilClick(number)}}
+                  >
+                    <div className="number">{number}</div>
+                  </div>
+                )
+              })
+            }
+          </div>
           <div className="flex">
             <button onClick={validateBoard}>Validate</button>
             <label htmlFor="autoValidate">auto
               <input name="autoValidate" type="checkbox" checked={autoValidate} onChange={() => {setAutoValidate(!autoValidate)}} />
             </label>
           </div>
+          <div className="title">Number</div>
           <div className="numberBoard">
             {
               numbers.map(number => {
