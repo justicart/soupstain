@@ -67,6 +67,9 @@
   height: 50px;
   cursor: pointer;
 }
+.numberCell.selected {
+  background: rgba(36, 210, 253, 0.5);
+}
 
 .number {
   font-size: 35px;

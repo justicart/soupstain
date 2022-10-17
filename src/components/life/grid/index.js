@@ -141,13 +141,13 @@ function Grid() {
     setCurrentGrid(workingGrid);
   }
 
-  const addShapeAtCenter = (shape) => {
-    const isEven = grid.rows % 2 === 0;
-    const half = grid.emptyGrid.length / 2;
-    const middleIndex = Math.floor(isEven ? half + (grid.columns / 2) : half);
-    const workingGrid = generator(middleIndex, grid.columns, shapes[shape], grid.emptyGrid)
-    setCurrentGrid(workingGrid);
-  }
+  // const addShapeAtCenter = (shape) => {
+  //   const isEven = grid.rows % 2 === 0;
+  //   const half = grid.emptyGrid.length / 2;
+  //   const middleIndex = Math.floor(isEven ? half + (grid.columns / 2) : half);
+  //   const workingGrid = generator(middleIndex, grid.columns, shapes[shape], grid.emptyGrid)
+  //   setCurrentGrid(workingGrid);
+  // }
 
   const ghostShape = (draftShape, index) => {
     const workingGrid = generator(index, grid.columns, shapes[draftShape], grid.emptyGrid);
@@ -211,11 +211,11 @@ function Grid() {
     )
   })
 
-  const presets = Object.keys(shapes).map((shape) => {
-    return (
-      <button onClick={() => addShapeAtCenter(shape)} key={`${shape}_presets`}>{shape}</button>
-    )
-  })
+  // const presets = Object.keys(shapes).map((shape) => {
+  //   return (
+  //     <button onClick={() => addShapeAtCenter(shape)} key={`${shape}_presets`}>{shape}</button>
+  //   )
+  // })
   
   const presetsDraft = Object.keys(shapes).map((shape) => {
     const selected = shape === draftShape;

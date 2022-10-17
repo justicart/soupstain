@@ -76,7 +76,7 @@ export default function Sudoku() {
   }
 
   function setSelectedCellNumber(num) {
-    if (selectedCell == null || board[selectedCell].isGiven) {
+    if (board[selectedCell].isGiven) {
       return;
     }
     const newBoard = [...board];
@@ -89,6 +89,11 @@ export default function Sudoku() {
     setBoard(newBoard);
   }
 
+  function handleCellClick(num) {
+    const number = num !== board[selectedCell].number ? num : null;
+    setSelectedCellNumber(number)
+  }
+  
   return (
     <div>
       <h1>Sudoku</h1>
@@ -132,11 +137,18 @@ export default function Sudoku() {
           <div className="numberBoard">
             {
               numbers.map(number => {
+                const isSelected = selectedCell != null && number === board[selectedCell].number;
+                const classes = classNames(
+                  'numberCell',
+                  {
+                    selected: isSelected,
+                  },
+                )
                 return (
                   <div
-                    className="numberCell"
+                    className={classes}
                     key={number}
-                    onClick={() => {setSelectedCellNumber(number)}}
+                    onClick={() => {handleCellClick(number)}}
                   >
                     <div className="number">{number}</div>
                   </div>
