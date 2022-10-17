@@ -25,7 +25,7 @@ export default function Sudoku() {
   const [board, setBoard] = useState(createBoard());
   const [validation, setValidation] = useState(new Array(arraySize).fill(true));
   const [autoValidate, setAutoValidate] = useState(false);
-  const [selectedCell, setSelectedCell] = useState();
+  const [selectedCell, setSelectedCell] = useState([]);
 
   function validateBoard() {
     const newValidation = [...validation];
@@ -75,34 +75,39 @@ export default function Sudoku() {
     setValidation(newValidation)
   }
 
-  function addPencil(num) {
-    if (board[selectedCell].isGiven) {
-      return;
-    }
+  function addPencil(num, center) {
+    const pencil = center === true ? 'centerPencil' : 'pencil';
     const newBoard = [...board];
-    newBoard[selectedCell].pencil.push(num);
-    newBoard[selectedCell].pencil.sort(function(a, b) {
-      return a - b;
-    });
+    for (const cell of selectedCell) {
+      if (
+        newBoard[cell][pencil].indexOf(num) < 0 &&
+        newBoard[cell].isGiven !== true
+      ) {
+        newBoard[cell][pencil].push(num);
+        newBoard[cell][pencil].sort(function(a, b) {
+          return a - b;
+        });
+      }
+    }
     setBoard(newBoard);
   }
   
-  function deletePencil(num) {
-    if (board[selectedCell].isGiven) {
-      return;
-    }
+  function deletePencil(num, center) {
+    const pencil = center === true ? 'centerPencil' : 'pencil';
     const newBoard = [...board];
-    newBoard[selectedCell].pencil = newBoard[selectedCell].pencil
-      .filter(item => item !== num);
+    for (const cell of selectedCell) {
+      newBoard[cell][pencil] = newBoard[cell][pencil]
+        .filter(item => item !== num);
+    }
     setBoard(newBoard);
   }
 
   function setSelectedCellNumber(num) {
-    if (board[selectedCell].isGiven) {
+    if (board[selectedCell[0]].isGiven) {
       return;
     }
     const newBoard = [...board];
-    newBoard[selectedCell].number = num;
+    newBoard[selectedCell[0]].number = num;
     if (autoValidate === true) {
       validateBoard();
     } else {
@@ -111,15 +116,29 @@ export default function Sudoku() {
     setBoard(newBoard);
   }
 
+  function handleSetSelectedCell(num, e) {
+    if (selectedCell[0] === num) {
+      return setSelectedCell([]);
+    }
+    if (e.shiftKey) {
+      e.preventDefault();
+      const newSelectedCell = [...selectedCell];
+      newSelectedCell.push(num);
+      return setSelectedCell(newSelectedCell);
+    }
+    setSelectedCell([num]);
+  }
+
   function handleCellClick(num) {
-    const number = num !== board[selectedCell].number ? num : null;
+    const number = num !== board[selectedCell[0]].number ? num : null;
     setSelectedCellNumber(number)
   }
   
-  function handlePencilClick(num) {
-    board[selectedCell].pencil.indexOf(num) > -1
-      ? deletePencil(num)
-      : addPencil(num);
+  function handlePencilClick(num, center = false) {
+    const pencil = center === true ? 'centerPencil' : 'pencil';
+    board[selectedCell[0]][pencil].indexOf(num) > -1
+      ? deletePencil(num, center)
+      : addPencil(num, center);
   }
 
   return (
@@ -133,12 +152,17 @@ export default function Sudoku() {
           <div className="line vertical b" />
           {
             board.map((cell, index) => {
-              const selected = selectedCell === index;
+              const guessed = cell.number != null;
+              const selected = selectedCell.indexOf(index) === 0;
+              const alsoSelected = selectedCell.indexOf(index) > -1 &&
+                selectedCell.indexOf(index) !== 0;
               const isValid = validation[index];
               const classes = classNames(
                 'cell',
                 {
+                  guessed,
                   selected,
+                  alsoSelected,
                   invalid: isValid === false,
                   given: cell.isGiven,
                 }
@@ -147,11 +171,18 @@ export default function Sudoku() {
                 <div
                   className={classes}
                   key={index}
-                  onClick={() => setSelectedCell(index)}
+                  onClick={(e) => handleSetSelectedCell(index, e)}
                 >
                   <div className="pencilGrid">
                     {
                       cell.pencil.map(pencilNumber => {
+                        return <div className="pencil" key={pencilNumber}>{pencilNumber}</div>
+                      })
+                    }
+                  </div>
+                  <div className="centerPencilGrid">
+                    {
+                      cell.centerPencil.map(pencilNumber => {
                         return <div className="pencil" key={pencilNumber}>{pencilNumber}</div>
                       })
                     }
@@ -163,11 +194,17 @@ export default function Sudoku() {
           }
         </div>
         <div className="controls">
+          <div className="flex">
+            <button onClick={validateBoard}>Validate</button>
+            <label htmlFor="autoValidate">auto
+              <input name="autoValidate" type="checkbox" checked={autoValidate} onChange={() => {setAutoValidate(!autoValidate)}} />
+            </label>
+          </div>
           <div className="title">Pencil</div>
           <div className="pencilBoard">
             {
               numbers.map(number => {
-                const isSelected = selectedCell != null && board[selectedCell].pencil.indexOf(number) > -1;
+                const isSelected = selectedCell[0] != null && board[selectedCell[0]].pencil.indexOf(number) > -1;
                 const classes = classNames(
                   'numberCell',
                   {
@@ -186,17 +223,34 @@ export default function Sudoku() {
               })
             }
           </div>
-          <div className="flex">
-            <button onClick={validateBoard}>Validate</button>
-            <label htmlFor="autoValidate">auto
-              <input name="autoValidate" type="checkbox" checked={autoValidate} onChange={() => {setAutoValidate(!autoValidate)}} />
-            </label>
+          <div className="title">Center pencil</div>
+          <div className="pencilBoard">
+            {
+              numbers.map(number => {
+                const isSelected = selectedCell[0] != null && board[selectedCell[0]].centerPencil.indexOf(number) > -1;
+                const classes = classNames(
+                  'numberCell',
+                  {
+                    selected: isSelected,
+                  },
+                )
+                return (
+                  <div
+                    className={classes}
+                    key={number}
+                    onClick={() => {handlePencilClick(number, true)}}
+                  >
+                    <div className="number">{number}</div>
+                  </div>
+                )
+              })
+            }
           </div>
           <div className="title">Number</div>
           <div className="numberBoard">
             {
               numbers.map(number => {
-                const isSelected = selectedCell != null && number === board[selectedCell].number;
+                const isSelected = selectedCell[0] != null && number === board[selectedCell[0]].number;
                 const classes = classNames(
                   'numberCell',
                   {

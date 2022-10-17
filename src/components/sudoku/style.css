@@ -43,12 +43,16 @@
   width: 50px;
   height: 50px;
   cursor: pointer;
+  position: relative;
 }
 .cell.selected {
   background-color: #24d3fd;
 }
-.cell.selected.given {
+.cell.alsoSelected {
   background-color: rgba(36, 210, 253, 0.5);
+}
+.cell.selected.given {
+  background-color: rgba(36, 210, 253, 0.1);
 }
 .cell.invalid {
   color: red;
@@ -75,16 +79,34 @@
   font-size: 35px;
   line-height: 50px;
   text-align: center;
+  user-select: none;
 }
 .given .number {
   opacity: 0.7;
 }
 
 .pencilGrid {
+  position: absolute;
   display: flex;
   font-size: 12px;
+  font-weight: 300;
+  flex-wrap: wrap;
+}
+.centerPencilGrid {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  font-size: 12px;
+  font-weight: 900;
   flex-wrap: wrap;
 }
 .pencil {
   padding: 0 2px;
+  user-select: none;
+}
+
+.guessed .pencilGrid,
+.guessed .centerPencilGrid {
+  display: none;
 }
