@@ -156,15 +156,16 @@ export default function Sudoku() {
               const selected = selectedCell.indexOf(index) === 0;
               const alsoSelected = selectedCell.indexOf(index) > -1 &&
                 selectedCell.indexOf(index) !== 0;
-              const isValid = validation[index];
+              const invalid = validation[index] === false;
+              const given = cell.isGiven;
               const classes = classNames(
                 'cell',
                 {
                   guessed,
                   selected,
                   alsoSelected,
-                  invalid: isValid === false,
-                  given: cell.isGiven,
+                  invalid,
+                  given,
                 }
               );
               return (
@@ -204,11 +205,11 @@ export default function Sudoku() {
           <div className="pencilBoard">
             {
               numbers.map(number => {
-                const isSelected = selectedCell[0] != null && board[selectedCell[0]].pencil.indexOf(number) > -1;
+                const selected = selectedCell[0] != null && board[selectedCell[0]].pencil.indexOf(number) > -1;
                 const classes = classNames(
                   'numberCell',
                   {
-                    selected: isSelected,
+                    selected,
                   },
                 )
                 return (
@@ -227,11 +228,11 @@ export default function Sudoku() {
           <div className="pencilBoard">
             {
               numbers.map(number => {
-                const isSelected = selectedCell[0] != null && board[selectedCell[0]].centerPencil.indexOf(number) > -1;
+                const selected = selectedCell[0] != null && board[selectedCell[0]].centerPencil.indexOf(number) > -1;
                 const classes = classNames(
                   'numberCell',
                   {
-                    selected: isSelected,
+                    selected,
                   },
                 )
                 return (
@@ -250,11 +251,11 @@ export default function Sudoku() {
           <div className="numberBoard">
             {
               numbers.map(number => {
-                const isSelected = selectedCell[0] != null && number === board[selectedCell[0]].number;
+                const selected = selectedCell[0] != null && number === board[selectedCell[0]].number;
                 const classes = classNames(
                   'numberCell',
                   {
-                    selected: isSelected,
+                    selected,
                   },
                 )
                 return (
