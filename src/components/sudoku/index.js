@@ -200,13 +200,10 @@ export default function Sudoku() {
           }
         </div>
         <div className="controls">
-          <div className="flex">
-            <button onClick={validateBoard}>Validate</button>
-            <label htmlFor="autoValidate">auto
-              <input name="autoValidate" type="checkbox" checked={autoValidate} onChange={() => {setAutoValidate(!autoValidate)}} />
-            </label>
+          <div className="title">
+            Pencil
+            {/* <div className="clear">&times;</div> */}
           </div>
-          <div className="title">Pencil</div>
           <div className="pencilBoard">
             {
               numbers.map(number => {
@@ -275,6 +272,14 @@ export default function Sudoku() {
               })
             }
           </div>
+        </div>
+      </div>
+      <div className="bottomControls">
+        <div className="flex">
+          <button onClick={validateBoard}>Validate</button>
+          <label htmlFor="autoValidate">auto
+            <input name="autoValidate" type="checkbox" checked={autoValidate} onChange={() => {setAutoValidate(!autoValidate)}} />
+          </label>
         </div>
       </div>
     </div>

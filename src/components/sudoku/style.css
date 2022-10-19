@@ -110,3 +110,21 @@
 .guessed .centerPencilGrid {
   display: none;
 }
+
+.controls .numberCell {
+  height: 44px;
+  width: 44px;
+}
+
+.controls .number {
+  font-size: 26px;
+  line-height: 44px;
+}
+
+.title {
+  position: relative;
+}
+.x {
+  position: absolute;
+  right: 0;
+}
