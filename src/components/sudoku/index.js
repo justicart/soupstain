@@ -130,11 +130,17 @@ export default function Sudoku() {
   }
 
   function handleCellClick(num) {
+    if (selectedCell.length < 1) {
+      return;
+    }
     const number = num !== board[selectedCell[0]].number ? num : null;
     setSelectedCellNumber(number)
   }
   
   function handlePencilClick(num, center = false) {
+    if (selectedCell.length < 1) {
+      return;
+    }
     const pencil = center === true ? 'centerPencil' : 'pencil';
     board[selectedCell[0]][pencil].indexOf(num) > -1
       ? deletePencil(num, center)
@@ -143,7 +149,6 @@ export default function Sudoku() {
 
   return (
     <div>
-      <h1>Sudoku</h1>
       <div className="flex">
         <div className="board">
           <div className="line horizontal a" />
@@ -224,7 +229,7 @@ export default function Sudoku() {
               })
             }
           </div>
-          <div className="title">Center pencil</div>
+          <div className="title">Pencil 2</div>
           <div className="pencilBoard">
             {
               numbers.map(number => {
