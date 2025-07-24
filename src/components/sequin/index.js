@@ -28,6 +28,7 @@ function Sequin() {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [controlsVisible, setControlsVisible] = useState(false);
   const [bgImageDimensions, setBgImageDimensions] = useState({ width: 0, height: 0 });
+  const controlsTimeoutRef = useRef(null);
   const randomnessRef = useRef(new Map());
   const ref = useRef();
   const canvasRef = useRef();
@@ -287,7 +288,9 @@ function Sequin() {
 
   const handleControlsMouseDown = useCallback((e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
-    e.preventDefault(); // Prevent scrolling on touch
+    if (e.type === 'touchstart') {
+      e.preventDefault(); // Only prevent default for touch events when dragging
+    }
     const pos = getEventPos(e);
     setIsDraggingControls(true);
     setDragOffset({
@@ -327,6 +330,17 @@ function Sequin() {
       document.addEventListener('touchend', handleMouseUp);
       document.addEventListener('touchend', handleControlsMouseUp);
       
+      const resetControlsOnTouchEnd = () => {
+        setTimeout(() => {
+          if (!isDraggingControls) {
+            setIsOverControls(false);
+            setShowBrushPreview(false);
+          }
+        }, 50);
+      };
+      
+      document.addEventListener('touchend', resetControlsOnTouchEnd);
+      
       return () => {
         // Mouse events
         document.removeEventListener('mousemove', handleMouseMove);
@@ -339,6 +353,7 @@ function Sequin() {
         document.removeEventListener('touchmove', handleControlsDrag);
         document.removeEventListener('touchend', handleMouseUp);
         document.removeEventListener('touchend', handleControlsMouseUp);
+        document.removeEventListener('touchend', resetControlsOnTouchEnd);
       };
     }
   }, [active, handleMouseMove, handleMouseUp, handleControlsDrag, handleControlsMouseUp]);
@@ -379,7 +394,24 @@ function Sequin() {
           transformOrigin: 'top left'
         }}
         onMouseDown={handleControlsMouseDown}
-        onTouchStart={handleControlsMouseDown}
+        onTouchStart={(e) => {
+          if (controlsTimeoutRef.current) {
+            clearTimeout(controlsTimeoutRef.current);
+          }
+          // Only set controls state if not touching an input or button
+          if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+            setIsOverControls(true);
+            setShowBrushPreview(true);
+            handleControlsMouseDown(e);
+          }
+        }}
+        onTouchEnd={() => {
+          // Use timeout to allow for any child touch events to complete
+          controlsTimeoutRef.current = setTimeout(() => {
+            setIsOverControls(false);
+            setShowBrushPreview(false);
+          }, 100);
+        }}
         onMouseEnter={() => {
           setIsOverControls(true);
           setShowBrushPreview(true);
@@ -398,6 +430,10 @@ function Sequin() {
             step="0.1"
             value={brushSize}
             onChange={(e) => setBrushSize(parseFloat(e.target.value))}
+            onTouchStart={() => {
+              setIsOverControls(true);
+              setShowBrushPreview(true);
+            }}
             style={{ width: '100%' }}
           />
         </div>
@@ -410,6 +446,10 @@ function Sequin() {
             step="0.05"
             value={featherAmount}
             onChange={(e) => setFeatherAmount(parseFloat(e.target.value))}
+            onTouchStart={() => {
+              setIsOverControls(true);
+              setShowBrushPreview(true);
+            }}
             style={{ width: '100%' }}
           />
         </div>
