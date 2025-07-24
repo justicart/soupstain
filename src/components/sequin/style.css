@@ -6,11 +6,45 @@
 
 .sequin {
   position: relative;
-  background: white;
+  background: linear-gradient(135deg, 
+    #d8d8d8 0%, 
+    #e8e8e8 25%, 
+    #dadada 50%, 
+    #c8c8c8 75%, 
+    #b8b8b8 100%);
   border-radius: 50%;
   height: 130%;
   width: 130%;
-  box-shadow: 0 2px 5px rgba(0,0,0,.5);
+  box-shadow: 
+    0 2px 8px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.8),
+    inset 0 -1px 0 rgba(0,0,0,0.2);
+  transition: box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  overflow: hidden;
+  transform-origin: center 10%;
+}
+
+.sequin:hover {
+  box-shadow: 
+    0 4px 12px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -1px 0 rgba(0,0,0,0.3);
+}
+
+.sequin.flipped {
+  background: none;
+  box-shadow: 
+    0 2px 8px rgba(0,0,0,0.5),
+    inset 0 0 10px rgba(0,0,0,0.3);
+}
+
+.sequinBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
 }
 
 .fade {
@@ -19,4 +53,10 @@
 }
 .fade.active {
   opacity: 1;
+}
+
+input {
+  box-sizing: border-box;
+  padding: 0 !important;
+  margin-top: 0 !important;
 }
