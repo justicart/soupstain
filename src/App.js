@@ -29,8 +29,59 @@ const stripes = [
 function App() {
   const [size, setSize] = useState(20);
   const [vh, setVh] = useState(0);
+  const [initialSelected, setInitialSelected] = useState(null);
 
   const element = useRef();
+
+  // Parse URL for stripe selection
+  useEffect(() => {
+    const parseUrl = () => {
+      // Check for path-based routing like /s
+      const targetLetter = window.location.pathname.slice(1);
+      
+      if (targetLetter) {
+        const targetLower = targetLetter.toLowerCase();
+        
+        // Check for s1, s2 format
+        if (targetLower.match(/^s\d+$/)) {
+          const sNumber = parseInt(targetLower.slice(1));
+          const sIndices = stripes
+            .map((stripe, index) => stripe.letter.toLowerCase() === 's' ? index : -1)
+            .filter(index => index !== -1);
+          
+          if (sIndices[sNumber - 1] !== undefined) {
+            setInitialSelected(sIndices[sNumber - 1]);
+          }
+        } else if (targetLower === 's') {
+          // For plain 's', use first occurrence
+          const sIndices = stripes
+            .map((stripe, index) => stripe.letter.toLowerCase() === 's' ? index : -1)
+            .filter(index => index !== -1);
+          
+          if (sIndices.length >= 1) {
+            setInitialSelected(sIndices[0]); // First 'S'
+          }
+        } else {
+          // For other letters, find the first occurrence
+          const stripeIndex = stripes.findIndex(stripe => 
+            stripe.letter.toLowerCase() === targetLower
+          );
+          
+          if (stripeIndex !== -1) {
+            setInitialSelected(stripeIndex);
+          }
+        }
+      }
+    };
+
+    parseUrl();
+    
+    // Listen for browser navigation changes
+    const handlePopState = () => parseUrl();
+    window.addEventListener('popstate', handlePopState);
+    
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const calculateSizes = () => {
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
@@ -50,6 +101,20 @@ function App() {
     }
   });
 
+  // Generate URL suffix for each stripe
+  const getUrlSuffix = (letter, index) => {
+    const letterLower = letter.toLowerCase();
+    if (letterLower === 's') {
+      const sIndices = stripes
+        .map((stripe, idx) => stripe.letter.toLowerCase() === 's' ? idx : -1)
+        .filter(idx => idx !== -1);
+      
+      const sPosition = sIndices.indexOf(index) + 1;
+      return sPosition === 1 ? 's' : `s${sPosition}`;
+    }
+    return letterLower;
+  };
+
   const renderStripes = stripes.map((stripe, index) => {
     return (
       <Stripe
@@ -57,6 +122,7 @@ function App() {
         key={index}
         index={index}
         letter={stripe.letter}
+        urlSuffix={getUrlSuffix(stripe.letter, index)}
         preview={<div className="generic">{stripe.previewText}</div>}
         size={size}
         reveal
@@ -68,7 +134,7 @@ function App() {
   });
   return (
     <LifeProvider>
-      <SequineProvider>
+      <SequineProvider initialSelected={initialSelected}>
         <div className="main columnParent" ref={element}>
           {renderStripes}
         </div>

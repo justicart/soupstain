@@ -13,6 +13,7 @@ function Stripe(
     preview,
     reveal,
     size,
+    urlSuffix,
     vh,
   }
 ) {
@@ -29,11 +30,16 @@ function Stripe(
   }
   const selectStripeHandler = useCallback(() => {
     if (selected === index) {
+      // Deselecting - clear URL
+      window.history.pushState({}, '', '/');
       return setSelected(undefined);
     }
+    
+    // Selecting - update URL with urlSuffix
+    window.history.pushState({}, '', `/${urlSuffix}`);
     setSelected(index);
     setActive(false);
-  }, [selected])
+  }, [selected, index, urlSuffix])
 
   const isSelected = selected === index;
   const small = selected != null && selected !== index;
