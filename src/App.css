@@ -135,6 +135,13 @@ button, input {
 .mobile .formRow {
   width: calc(100% - 20px);
 }
+
+/* Hide sequin controls on mobile */
+@media (max-width: 768px) {
+  .sequin-controls {
+    display: none !important;
+  }
+}
 .formRow .number {
   font-feature-settings: 'tnum';
   -webkit-font-feature-settings: 'tnum';

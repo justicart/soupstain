@@ -374,6 +374,7 @@ function Sequin() {
     <div style={{ height: '100%', width: '100%', userSelect: 'none', position: 'relative' }} ref={ref}>
       {/* Controls Panel */}
       <div 
+        className="sequin-controls"
         style={{
           position: 'fixed',
           top: `${controlsPosition.y}px`,
