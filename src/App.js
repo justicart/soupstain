@@ -44,7 +44,7 @@ function App() {
         
         // Check for s1, s2 format
         if (targetLower.match(/^s\d+$/)) {
-          const sNumber = parseInt(targetLower.slice(1));
+          const sNumber = parseInt(targetLower.slice(1), 10);
           const sIndices = stripes
             .map((stripe, index) => stripe.letter.toLowerCase() === 's' ? index : -1)
             .filter(index => index !== -1);
