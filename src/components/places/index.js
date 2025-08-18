@@ -1,12 +1,6 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Papa from 'papaparse';
-import {
-  ComposableMap,
-  Geographies,
-  Geography,
-  ZoomableGroup
-} from 'react-simple-maps';
-import {useEffect, useState} from 'react';
+import D3Map from './D3Map';
 
 import './style.css';
 
@@ -29,8 +23,7 @@ function Places() {
   const [usaData, setUsaData] = useState([]);
   const [canadaData, setCanadaData] = useState([]);
   const [currentMap, setCurrentMap] = useState('usa');
-  const [usaPosition, setUsaPosition] = useState({ coordinates: [0, 0], zoom: 1 });
-  const [canadaPosition, setCanadaPosition] = useState({ coordinates: [-92.74, 57.82], zoom: 1 });
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     // Load USA data
@@ -50,6 +43,14 @@ function Places() {
         setCanadaData(results.data);
       }
     });
+
+    // Handle window resize for mobile detection
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Create state mappings for USA
@@ -91,137 +92,44 @@ function Places() {
   const usaCustomization = createStateCustomization(usaData, 'state');
   const canadaCustomization = createStateCustomization(canadaData, 'province');
 
-  function handleUsaMoveEnd(position) {
-    console.log('USA position:', position);
-    setUsaPosition(position);
-  }
-
-  function handleCanadaMoveEnd(position) {
-    console.log('Canada position:', position);
-    setCanadaPosition(position);
-  }
-
-  function getStateFill(geo, isCanada) {
-    let locationName;
-    
-    if (isCanada) {
-      // Canadian provinces use NAME property
-      locationName = geo.properties.NAME;
-    } else {
-      // USA states
-      locationName = geo.properties.name;
-    }
-    
-    if (!locationName) return DEFAULT_FILL;
-    
-    const customization = isCanada ? canadaCustomization[locationName] : usaCustomization[locationName];
-    return customization ? customization.fill : DEFAULT_FILL;
-  }
-
 
   return (
     <div className="places-container">
       <h1>Oh the Places You'll Go</h1>
       <div className="map-wrapper">
-        <div className="map-overlay-controls">
-          <button 
-            onClick={() => setCurrentMap('usa')} 
-            className={currentMap === 'usa' ? 'active-map-btn' : 'map-btn'}
-          >
-            🇺🇸 USA
-          </button>
-          <button 
-            onClick={() => setCurrentMap('canada')} 
-            className={currentMap === 'canada' ? 'active-map-btn' : 'map-btn'}
-          >
-            🇨🇦 Canada
-          </button>
-        </div>
-        {/* USA Map */}
-        <div style={{ display: currentMap === 'usa' ? 'block' : 'none', width: "100%", height: "100%" }}>
-          <ComposableMap
-            projection="geoAlbersUsa"
-            projectionConfig={{ scale: 1000 }}
-            width={800}
-            height={500}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <ZoomableGroup
-              zoom={usaPosition.zoom}
-              center={usaPosition.coordinates}
-              onMoveEnd={handleUsaMoveEnd}
-            >
-              <Geographies geography={geoUrls.usa}>
-                {({ geographies }) =>
-                  geographies.map((geo) => (
-                    <Geography
-                      key={geo.rsmKey}
-                      geography={geo}
-                      fill={getStateFill(geo, false)}
-                      stroke="#000000"
-                      strokeWidth={0.5}
-                      style={{
-                        default: {
-                          outline: "none",
-                        },
-                        hover: {
-                          outline: "none",
-                          opacity: 0.8,
-                        },
-                        pressed: {
-                          outline: "none",
-                        },
-                      }}
-                    />
-                  ))
-                }
-              </Geographies>
-            </ZoomableGroup>
-          </ComposableMap>
-        </div>
-
-        {/* Canada Map */}
-        <div style={{ display: currentMap === 'canada' ? 'block' : 'none', width: "100%", height: "100%" }}>
-          <ComposableMap
-            projection="geoConicEqualArea"
-            projectionConfig={{ center: [-106, 60], scale: 800, rotate: [96, 0, 0] }}
-            width={800}
-            height={500}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <ZoomableGroup
-              zoom={canadaPosition.zoom}
-              center={canadaPosition.coordinates}
-              onMoveEnd={handleCanadaMoveEnd}
-            >
-              <Geographies geography={geoUrls.canada}>
-                {({ geographies }) =>
-                  geographies.map((geo) => (
-                    <Geography
-                      key={geo.rsmKey}
-                      geography={geo}
-                      fill={getStateFill(geo, true)}
-                      stroke="#000000"
-                      strokeWidth={0.5}
-                      style={{
-                        default: {
-                          outline: "none",
-                        },
-                        hover: {
-                          outline: "none",
-                          opacity: 0.8,
-                        },
-                        pressed: {
-                          outline: "none",
-                        },
-                      }}
-                    />
-                  ))
-                }
-              </Geographies>
-            </ZoomableGroup>
-          </ComposableMap>
-        </div>
+        
+          {isMobile ? (
+            <div className="map-overlay-controls">
+              <button 
+                onClick={() => setCurrentMap('northamerica')} 
+                className="active-map-btn"
+              >
+                🌎 North America
+              </button>
+            </div>
+          ) : (
+            <div className="map-overlay-controls">
+              <button 
+                onClick={() => setCurrentMap('usa')} 
+                className={currentMap === 'usa' ? 'active-map-btn' : 'map-btn'}
+              >
+                🇺🇸 USA
+              </button>
+              <button 
+                onClick={() => setCurrentMap('canada')} 
+                className={currentMap === 'canada' ? 'active-map-btn' : 'map-btn'}
+              >
+                🇨🇦 Canada
+              </button>
+            </div>
+          )}
+        <D3Map 
+          currentMap={currentMap}
+          usaData={usaData}
+          canadaData={canadaData}
+          usaCustomization={usaCustomization}
+          canadaCustomization={canadaCustomization}
+        />
       </div>
     </div>
   );
